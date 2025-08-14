@@ -78,6 +78,7 @@ public class SecurityConfig {
                     "/api/jobs/search",
                     "/api/jobs",
                     "/api/jobs/{id}",
+                    "/api/resumes/**", 
                     "/actuator/**"
                 ).permitAll()
                 .anyRequest().authenticated()

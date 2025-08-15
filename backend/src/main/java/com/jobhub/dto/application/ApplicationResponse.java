@@ -18,6 +18,7 @@ public class ApplicationResponse {
     private LocalDateTime interviewDate;
     private LocalDateTime appliedAt;
     private LocalDateTime updatedAt;
+    private String applicantResumeUrl;
 
     // Constructors
     public ApplicationResponse() {}
@@ -61,4 +62,12 @@ public class ApplicationResponse {
 
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public String getApplicantResumeUrl() {
+        return applicantResumeUrl;
+    }
+
+    public void setApplicantResumeUrl(String applicantResumeUrl) {
+        this.applicantResumeUrl = applicantResumeUrl;
+    }
 }

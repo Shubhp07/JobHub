@@ -1,5 +1,6 @@
 package com.jobhub.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.jobhub.dto.job.ApplicantSummary;
 import com.jobhub.entity.Job;
 import com.jobhub.entity.JobApplication;
 import com.jobhub.entity.User;
@@ -36,6 +38,18 @@ public interface JobApplicationRepository extends JpaRepository<JobApplication, 
             @Param("status") JobApplication.ApplicationStatus status,
             Pageable pageable
     );
+
+    @Query("""
+  SELECT 
+    ja.user.id as userId,
+    ja.user.name as userName,
+    ja.user.email as userEmail,
+    ja.user.resumeUrl as resumeUrl, 
+    ja.id as applicationId
+  FROM JobApplication ja
+  WHERE ja.job = :job
+""")
+    List<ApplicantSummary> findApplicantsByJob(@Param("job") Job job);
 
     @Query("SELECT ja FROM JobApplication ja JOIN FETCH ja.user JOIN FETCH ja.job WHERE ja.job = :job AND ja.status = :status")
     Page<JobApplication> findByJobAndStatus(@Param("job") Job job, @Param("status") JobApplication.ApplicationStatus status, Pageable pageable);

@@ -1,5 +1,6 @@
 package com.jobhub.controller;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -98,29 +99,35 @@ public class UserController {
     }
 
     @RestController
-@RequestMapping("/api/resumes")
-public class ResumeController {
+    @RequestMapping("/api/resumes")
+    public class ResumeController {
 
-    // Adjust the dir to match your service
-    private final String RESUME_DIR = "D:/Project/Resume";
+        // Adjust the dir to match your service
+        private final String RESUME_DIR = "D:/Project/Resume";
 
-    @GetMapping("/{filename:.+}")
-    public ResponseEntity<Resource> getResume(@PathVariable String filename) {
-        try {
-            Path filePath = Paths.get(RESUME_DIR).resolve(filename);
-            Resource resource = new UrlResource(filePath.toUri());
-            if (!resource.exists() || !resource.isReadable()) {
+        @GetMapping("/{filename:.+}")
+        public ResponseEntity<Resource> getResume(@PathVariable String filename) {
+            try {
+                Path filePath = Paths.get(RESUME_DIR).resolve(filename);
+                Resource resource = new UrlResource(filePath.toUri());
+                if (!resource.exists() || !resource.isReadable()) {
+                    return ResponseEntity.notFound().build();
+                }
+                // Dynamically detect MIME type
+                String contentType = Files.probeContentType(filePath);
+                if (contentType == null) {
+                    contentType = "application/pdf"; // fallback for PDF
+                }
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                        .header(HttpHeaders.CONTENT_TYPE, contentType)
+                        .body(resource);
+            } catch (Exception e) {
                 return ResponseEntity.notFound().build();
             }
-            // Set "inline" for view in browser, "attachment" for download
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
-                    .body(resource);
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
         }
+
     }
-}
 
     @GetMapping("/search")
     @Operation(summary = "Search job seekers")

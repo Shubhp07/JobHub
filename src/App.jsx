@@ -10,7 +10,7 @@ import LandingPage from './pages/LandingPage.jsx';
 import SignIn from './pages/SignIn.jsx'; // Make sure this component exists
 import Login from './pages/Login.jsx';
 import OAuthSuccess from './pages/OAuthSuccess.jsx';
-import DashboardLayout from './layouts/DashboardLayout.jsx';
+import DashboardLayout from './Layouts/DashboardLayout.jsx';
 
 // --- Import the Guard Components ---
 import RequireAuth from './components/RequireAuth';

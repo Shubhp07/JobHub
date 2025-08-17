@@ -79,6 +79,9 @@ public class User implements UserDetails {
 
     private Boolean isActive = true;
 
+    public String getName() {
+        return firstName + " " + lastName;
+    }
     @Column(nullable = false)
     private Boolean enabled = true;
 

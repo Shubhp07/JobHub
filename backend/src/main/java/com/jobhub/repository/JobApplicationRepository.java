@@ -42,7 +42,7 @@ public interface JobApplicationRepository extends JpaRepository<JobApplication, 
     @Query("""
   SELECT 
     ja.user.id as userId,
-    ja.user.name as userName,
+    CONCAT(ja.user.firstName, ' ', ja.user.lastName) as userName,
     ja.user.email as userEmail,
     ja.user.resumeUrl as resumeUrl, 
     ja.id as applicationId
@@ -50,6 +50,8 @@ public interface JobApplicationRepository extends JpaRepository<JobApplication, 
   WHERE ja.job = :job
 """)
     List<ApplicantSummary> findApplicantsByJob(@Param("job") Job job);
+
+    List<JobApplication> findByJob_Id(Long jobId);
 
     @Query("SELECT ja FROM JobApplication ja JOIN FETCH ja.user JOIN FETCH ja.job WHERE ja.job = :job AND ja.status = :status")
     Page<JobApplication> findByJobAndStatus(@Param("job") Job job, @Param("status") JobApplication.ApplicationStatus status, Pageable pageable);

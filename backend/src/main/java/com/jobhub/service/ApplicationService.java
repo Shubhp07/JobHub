@@ -22,8 +22,8 @@ public class ApplicationService {
     private UserRepository userRepository;
 
     public List<ApplicantDto> getApplicantsForJob(Long jobId) {
-        // Fetch all job applications for the given jobId
-        List<JobApplication> applications = jobApplicationRepository.findByJobId(jobId);
+        // Fetch all job applications for the given jobId using the correct repository method
+        List<JobApplication> applications = jobApplicationRepository.findByJob_Id(jobId);
 
         List<ApplicantDto> applicants = new ArrayList<>();
         for (JobApplication app : applications) {
@@ -36,7 +36,7 @@ public class ApplicationService {
                 dto.setJobTitle(app.getJob().getTitle());
                 dto.setCompany(app.getJob().getCompany());
                 dto.setUserId(user.getId());
-                dto.setUserName(user.getName());
+                dto.setUserName(user.getName()); // Ensure User class has getName() method
                 dto.setUserEmail(user.getEmail());
                 // Assuming User entity has getResumeUrl() method returning the resume's URL
                 dto.setResumeUrl(user.getResumeUrl());

@@ -109,6 +109,7 @@ const ApplicantsModal = ({ job, onClose }) => {
               <X className="h-6 w-6" />
             </button>
             <h4 className="text-lg font-semibold mb-4">Resume Preview</h4>
+            
             <iframe
               src={selectedResumeUrl}
               title="Resume Preview"

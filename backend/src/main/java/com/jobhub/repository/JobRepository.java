@@ -45,12 +45,13 @@ public interface JobRepository extends JpaRepository<Job, Long> {
             @Param("experienceLevel") Job.ExperienceLevel experienceLevel,
             @Param("minSalary") BigDecimal minSalary,
             @Param("maxSalary") BigDecimal maxSalary,
-            Pageable pageable
-    );
+            Pageable pageable);
 
     @Query("SELECT j FROM Job j WHERE j.status = 'ACTIVE' AND j.applicationDeadline > :now")
     Page<Job> findActiveJobsWithValidDeadline(@Param("now") LocalDateTime now, Pageable pageable);
 
     @Query("SELECT j FROM Job j JOIN j.requiredSkills js JOIN js.skill s WHERE s.name IN :skillNames AND j.status = 'ACTIVE'")
     Page<Job> findJobsBySkills(@Param("skillNames") List<String> skillNames, Pageable pageable);
+
+    // No method returning JobApplication here; remove any findByJob_Id(Long) from this interface
 }

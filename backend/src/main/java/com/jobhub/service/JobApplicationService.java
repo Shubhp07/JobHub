@@ -84,17 +84,15 @@ public class JobApplicationService {
         }
 
         Page<JobApplication> applications;
-    if (status != null) {
-        // You'll need to add this new method to your repository.
-        applications = applicationRepository.findByJobAndStatus(job, status, pageable);
-    } else {
-        applications = applicationRepository.findByJob(job, pageable);
-    }
+        if (status != null) {
+            // You'll need to add this new method to your repository if it doesn't exist.
+            applications = applicationRepository.findByJobAndStatus(job, status, pageable);
+        } else {
+            applications = applicationRepository.findByJob(job, pageable);
+        }
 
-        
         return applications.map(this::convertToResponse);
     }
-
 
     public ApplicationResponse getApplication(Long applicationId, String userEmail) {
         JobApplication application = applicationRepository.findById(applicationId)
@@ -104,8 +102,8 @@ public class JobApplicationService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         // Check if user is the applicant or the employer
-        if (!application.getUser().getId().equals(user.getId()) && 
-            !application.getJob().getEmployer().getId().equals(user.getId())) {
+        if (!application.getUser().getId().equals(user.getId())
+                && !application.getJob().getEmployer().getId().equals(user.getId())) {
             throw new AccessDeniedException("You don't have permission to view this application");
         }
 
@@ -188,11 +186,23 @@ public class JobApplicationService {
         response.setUserName(application.getUser().getFirstName() + " " + application.getUser().getLastName());
         response.setStatus(application.getStatus());
         response.setCoverLetter(application.getCoverLetter());
-        response.setResumeUrl(application.getResumeUrl());
+
+        // Use application resume if present, otherwise fallback to user's profile resume URL
+        String resumeUrl = application.getResumeUrl();
+        System.out.println("Application resumeUrl: " + resumeUrl);
+
+        if (resumeUrl == null || resumeUrl.isEmpty()) {
+            resumeUrl = application.getUser().getResumeUrl();
+            System.out.println("Using profile resumeUrl: " + resumeUrl);
+        }
+
+        response.setResumeUrl(resumeUrl);
+        response.setResumeUrl(resumeUrl);
         response.setNotes(application.getNotes());
         response.setInterviewDate(application.getInterviewDate());
         response.setAppliedAt(application.getAppliedAt());
         response.setUpdatedAt(application.getUpdatedAt());
         return response;
     }
+
 }

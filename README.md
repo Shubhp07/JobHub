@@ -3,6 +3,8 @@
 A full-stack job portal application where job seekers can search and apply for jobs, and employers can post and manage job listings.  
 Built with **Spring Boot**, **ReactJS**, and **MySQL**, with secure authentication using **JWT & OAuth2**.
 
+![image alt](https://github.com/Shubhp07/JobHub/blob/6bcf54eccd5c14d5057c6b5d8a50f53d63400a8e/Screenshot%202025-08-19%20001515.png)
+
 ---
 
 ## ✨ Features

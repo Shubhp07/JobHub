@@ -31,9 +31,9 @@ Employer Dashboard
 ---
 ![image alt](https://github.com/Shubhp07/JobHub/blob/3c94a0e7662d0464d25cc74d60d91633f64316c1/Screenshot%202025-08-19%20002614.png)
 
----
 Job Seeker Dashboard
-![image alt]()
+---
+![image alt](https://github.com/Shubhp07/JobHub/blob/c9fda8f6149e1bedc98eecddc8ad90f4dd87a254/Screenshot%202025-08-19%20002650.png)
 
 
 ### 1️⃣ Clone the repo
@@ -54,18 +54,8 @@ Edit
 cd frontend
 npm install
 npm start
-📸 Screenshots
-
-Employer Dashboard
----
-![image alt]
-
-Job Seeker Dashboard
 
 👨‍💻 Author
 Shubham Patil
 
-GitHub: @yourusername
-
-LinkedIn: Your LinkedIn
-
+GitHub: @Shubhp07

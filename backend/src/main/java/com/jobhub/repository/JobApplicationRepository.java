@@ -29,6 +29,9 @@ public interface JobApplicationRepository extends JpaRepository<JobApplication, 
 
     boolean existsByUserAndJob(User user, Job job);
 
+    @Query("SELECT COUNT(ja) FROM JobApplication ja WHERE ja.job.employer.id = :employerId AND ja.status = :status")
+    int countApplicationsByEmployerIdAndStatus(@Param("employerId") Long employerId, @Param("status") JobApplication.ApplicationStatus status);
+
     @Query("SELECT ja FROM JobApplication ja JOIN FETCH ja.user JOIN FETCH ja.job WHERE ja.job.employer = :employer")
     Page<JobApplication> findApplicationsForEmployer(@Param("employer") User employer, Pageable pageable);
 
@@ -53,6 +56,18 @@ public interface JobApplicationRepository extends JpaRepository<JobApplication, 
 
     List<JobApplication> findByJob_Id(Long jobId);
 
+    @Query("SELECT COUNT(ja) FROM JobApplication ja WHERE ja.job.employer.id = :employerId")
+    int countByEmployerId(@Param("employerId") Long employerId);
+
+    @Query("SELECT COUNT(ja) FROM JobApplication ja WHERE ja.job = :job")
+    int countApplicationsByJob(@Param("job") com.jobhub.entity.Job job);
+
+    @Query("SELECT COUNT(ja) FROM JobApplication ja WHERE ja.job.employer.id = :employerId AND ja.interviewDate IS NOT NULL")
+    int countInterviewsScheduled(@Param("employerId") Long employerId);
+
+    @Query("SELECT COUNT(ja) FROM JobApplication ja WHERE ja.job.employer.id = :employerId AND ja.status = 'HIRED'")
+    int countHiredApplications(@Param("employerId") Long employerId);
+
     @Query("SELECT ja FROM JobApplication ja JOIN FETCH ja.user JOIN FETCH ja.job WHERE ja.job = :job AND ja.status = :status")
     Page<JobApplication> findByJobAndStatus(@Param("job") Job job, @Param("status") JobApplication.ApplicationStatus status, Pageable pageable);
 
@@ -62,6 +77,4 @@ public interface JobApplicationRepository extends JpaRepository<JobApplication, 
     @Query("SELECT COUNT(ja) FROM JobApplication ja WHERE ja.user = :user")
     long countApplicationsByUser(@Param("user") User user);
 
-    @Query("SELECT COUNT(ja) FROM JobApplication ja WHERE ja.job = :job")
-    long countApplicationsByJob(@Param("job") Job job);
 }

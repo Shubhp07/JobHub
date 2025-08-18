@@ -10,12 +10,10 @@ const ApplicantsModal = ({ job, onClose }) => {
 
   useEffect(() => {
     if (!job) return;
-
     const fetchApplicants = async () => {
       try {
         setLoading(true);
         const data = await getApplicantsForJob(job.id);
-        console.log('Applicants data:', data);
         setApplicants(data);
       } catch (err) {
         setError(err.message);
@@ -24,7 +22,6 @@ const ApplicantsModal = ({ job, onClose }) => {
         setLoading(false);
       }
     };
-
     fetchApplicants();
   }, [job]);
 
@@ -33,6 +30,7 @@ const ApplicantsModal = ({ job, onClose }) => {
 
   return (
     <>
+      {/* Applicants Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
         <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full p-6 relative">
           <button
@@ -97,9 +95,9 @@ const ApplicantsModal = ({ job, onClose }) => {
         </div>
       </div>
 
-      {/* Resume Preview Modal */}
+      {/* Resume Preview Modal (always above Applicants Modal) */}
       {selectedResumeUrl && (
-        <div className="fixed inset-0 z-60 flex items-center justify-center bg-black bg-opacity-70">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-70">
           <div className="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6 relative h-[80vh] flex flex-col">
             <button
               onClick={closeResumeModal}
@@ -109,7 +107,6 @@ const ApplicantsModal = ({ job, onClose }) => {
               <X className="h-6 w-6" />
             </button>
             <h4 className="text-lg font-semibold mb-4">Resume Preview</h4>
-            
             <iframe
               src={selectedResumeUrl}
               title="Resume Preview"

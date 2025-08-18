@@ -1,7 +1,6 @@
 package com.jobhub.service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,11 +12,14 @@ import com.jobhub.dto.job.JobCreateRequest;
 import com.jobhub.dto.job.JobResponse;
 import com.jobhub.dto.job.JobSearchRequest;
 import com.jobhub.dto.job.JobUpdateRequest;
+import com.jobhub.dto.stats.EmployerDashboardStats;
 import com.jobhub.entity.Job;
+import com.jobhub.entity.JobApplication;
 import com.jobhub.entity.User;
 import com.jobhub.entity.UserType;
 import com.jobhub.exception.AccessDeniedException;
 import com.jobhub.exception.ResourceNotFoundException;
+import com.jobhub.repository.JobApplicationRepository;
 import com.jobhub.repository.JobRepository;
 import com.jobhub.repository.UserRepository;
 
@@ -31,6 +33,9 @@ public class JobService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private JobApplicationRepository jobApplicationRepository;
+
     public Page<JobResponse> getAllActiveJobs(Pageable pageable) {
         Page<Job> jobs = jobRepository.findByStatus(Job.JobStatus.ACTIVE, pageable);
         return jobs.map(this::convertToResponse);
@@ -41,7 +46,6 @@ public class JobService {
             return jobRepository.searchActiveJobs(request.getKeyword(), pageable)
                     .map(this::convertToResponse);
         }
-
         return jobRepository.findJobsWithFilters(
                 request.getLocation(),
                 request.getJobType(),
@@ -66,7 +70,7 @@ public class JobService {
             throw new AccessDeniedException("Only employers can create job postings");
         }
 
-        List<Job> jobExists = jobRepository.findByTitleIgnoreCaseAndLocationIgnoreCaseAndEmployer(
+        var jobExists = jobRepository.findByTitleIgnoreCaseAndLocationIgnoreCaseAndEmployer(
                 request.getTitle(), request.getLocation(), employer);
 
         if (!jobExists.isEmpty()) {
@@ -115,7 +119,7 @@ public class JobService {
         job.setCompany(request.getCompany());
         job.setCompanyLogo(request.getCompanyLogo());
         job.setApplicationDeadline(request.getApplicationDeadline());
-        job.setJobLink(request.getJobLink()); // ✅ ADD THIS LINE to allow updating the job link
+        job.setJobLink(request.getJobLink());
 
         Job updatedJob = jobRepository.save(job);
         return convertToResponse(updatedJob);
@@ -184,13 +188,43 @@ public class JobService {
         response.setApplicationDeadline(job.getApplicationDeadline());
         response.setCreatedAt(job.getCreatedAt());
         response.setUpdatedAt(job.getUpdatedAt());
-        response.setJobLink(job.getJobLink()); // ✅ ADD THIS LINE to include the link in the API response
+        response.setJobLink(job.getJobLink());
 
         if (job.getEmployer() != null) {
             response.setEmployerId(job.getEmployer().getId());
             response.setEmployerName(job.getEmployer().getFirstName() + " " + job.getEmployer().getLastName());
         }
 
+        long count = jobApplicationRepository.countApplicationsByJob(job);
+        response.setApplicationCount((int) count);
+
         return response;
+    }
+
+    public EmployerDashboardStats getEmployerDashboardStats(Long employerId) {
+        EmployerDashboardStats stats = new EmployerDashboardStats();
+
+        // 1. Active Jobs
+        int activeJobs = jobRepository.countByEmployer_IdAndStatus(employerId, Job.JobStatus.ACTIVE);
+
+        // 2. Total Applications (for all jobs by employer)
+        int totalApplications = jobApplicationRepository.countByEmployerId(employerId);
+
+        // 3. Interviews Scheduled
+        int interviews = jobApplicationRepository.countInterviewsScheduled(employerId);
+
+        // 4. Hire Rate (ratio of offers made to total applications)
+        double hireRate = 0;
+        int hiredCount = jobApplicationRepository.countApplicationsByEmployerIdAndStatus(employerId, JobApplication.ApplicationStatus.OFFER);
+        if (totalApplications > 0) {
+            hireRate = (double) hiredCount / totalApplications * 100;
+        }
+
+        stats.setActiveJobs(activeJobs);
+        stats.setTotalApplications(totalApplications);
+        stats.setInterviewsScheduled(interviews);
+        stats.setHireRate(hireRate);
+
+        return stats;
     }
 }

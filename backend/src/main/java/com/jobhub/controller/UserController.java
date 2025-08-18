@@ -1,6 +1,5 @@
 package com.jobhub.controller;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -113,11 +112,8 @@ public class UserController {
                 if (!resource.exists() || !resource.isReadable()) {
                     return ResponseEntity.notFound().build();
                 }
-                // Dynamically detect MIME type
-                String contentType = Files.probeContentType(filePath);
-                if (contentType == null) {
-                    contentType = "application/pdf"; // fallback for PDF
-                }
+                // Force Content-Type to PDF for all resumes
+                String contentType = "application/pdf";
                 return ResponseEntity.ok()
                         .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
                         .header(HttpHeaders.CONTENT_TYPE, contentType)

@@ -21,11 +21,14 @@ public interface JobRepository extends JpaRepository<Job, Long> {
 
     @Query("SELECT j FROM Job j WHERE LOWER(j.title) = LOWER(:title) AND LOWER(j.location) = LOWER(:location) AND j.employer = :employer")
     List<Job> findByTitleIgnoreCaseAndLocationIgnoreCaseAndEmployer(
-            @Param("title") String title,
-            @Param("location") String location,
-            @Param("employer") User employer);
+        @Param("title") String title,
+        @Param("location") String location,
+        @Param("employer") User employer);
 
     Page<Job> findByEmployer(User employer, Pageable pageable);
+
+    @Query("SELECT COUNT(j) FROM Job j WHERE j.employer.id = :employerId AND j.status = :status")
+    int countByEmployer_IdAndStatus(@Param("employerId") Long employerId, @Param("status") Job.JobStatus status);
 
     @Query("SELECT j FROM Job j WHERE j.status = 'ACTIVE' AND "
             + "(LOWER(j.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR "
@@ -40,12 +43,12 @@ public interface JobRepository extends JpaRepository<Job, Long> {
             + "(:minSalary IS NULL OR j.salaryMin >= :minSalary) AND "
             + "(:maxSalary IS NULL OR j.salaryMax <= :maxSalary)")
     Page<Job> findJobsWithFilters(
-            @Param("location") String location,
-            @Param("jobType") Job.JobType jobType,
-            @Param("experienceLevel") Job.ExperienceLevel experienceLevel,
-            @Param("minSalary") BigDecimal minSalary,
-            @Param("maxSalary") BigDecimal maxSalary,
-            Pageable pageable);
+        @Param("location") String location,
+        @Param("jobType") Job.JobType jobType,
+        @Param("experienceLevel") Job.ExperienceLevel experienceLevel,
+        @Param("minSalary") BigDecimal minSalary,
+        @Param("maxSalary") BigDecimal maxSalary,
+        Pageable pageable);
 
     @Query("SELECT j FROM Job j WHERE j.status = 'ACTIVE' AND j.applicationDeadline > :now")
     Page<Job> findActiveJobsWithValidDeadline(@Param("now") LocalDateTime now, Pageable pageable);
@@ -53,5 +56,4 @@ public interface JobRepository extends JpaRepository<Job, Long> {
     @Query("SELECT j FROM Job j JOIN j.requiredSkills js JOIN js.skill s WHERE s.name IN :skillNames AND j.status = 'ACTIVE'")
     Page<Job> findJobsBySkills(@Param("skillNames") List<String> skillNames, Pageable pageable);
 
-    // No method returning JobApplication here; remove any findByJob_Id(Long) from this interface
 }

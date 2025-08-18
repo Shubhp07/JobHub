@@ -24,6 +24,15 @@ public class JobResponse {
     private Long employerId;
     private String employerName;
     private String jobLink;
+    private int applicationCount; 
+
+    public int getApplicationCount() {
+        return applicationCount;
+    }
+
+    public void setApplicationCount(int applicationCount) {
+        this.applicationCount = applicationCount;
+    }
 
     // Constructors
     public JobResponse() {}

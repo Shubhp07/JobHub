@@ -34,10 +34,10 @@ public class SecurityConfig {
 
     @Autowired
     public SecurityConfig(JwtTokenProvider tokenProvider,
-                          UserDetailsService userDetailsService,
-                          CustomOAuth2UserService customOAuth2UserService,
-                          OAuth2LoginSuccessHandler successHandler,
-                          JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
+            UserDetailsService userDetailsService,
+            CustomOAuth2UserService customOAuth2UserService,
+            OAuth2LoginSuccessHandler successHandler,
+            JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
         this.tokenProvider = tokenProvider;
         this.userDetailsService = userDetailsService;
         this.customOAuth2UserService = customOAuth2UserService;
@@ -63,30 +63,33 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf.disable())
-            .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
+                // ------ Add this line to allow iframe embedding ------
+                .headers(headers -> headers.frameOptions(frame -> frame.disable()))
+                // -----------------------------------------------------
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers(
-                    "/api/auth/**",
-                    "/login/**",
-                    "/oauth2/**",
-                    "/swagger-ui/**",
-                    "/v3/api-docs/**",
-                    "/api/jobs/search",
-                    "/api/jobs",
-                    "/api/jobs/{id}",
-                    "/api/resumes/**", 
-                    "/actuator/**"
+                        "/api/auth/**",
+                        "/login/**",
+                        "/oauth2/**",
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/api/jobs/search",
+                        "/api/jobs",
+                        "/api/jobs/{id}",
+                        "/api/resumes/**",
+                        "/actuator/**"
                 ).permitAll()
                 .anyRequest().authenticated()
-            )
-            .oauth2Login(oauth2 -> oauth2
+                )
+                .oauth2Login(oauth2 -> oauth2
                 .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                 .successHandler(successHandler)
-            );
+                );
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 

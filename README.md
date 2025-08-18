@@ -26,12 +26,13 @@ Built with **Spring Boot**, **ReactJS**, and **MySQL**, with secure authenticati
 
 ---
 
-## ⚡ Getting Started
-
 ## 📸 Screenshots
-
 Employer Dashboard
 ---
+![image alt](https://github.com/Shubhp07/JobHub/blob/3c94a0e7662d0464d25cc74d60d91633f64316c1/Screenshot%202025-08-19%20002614.png)
+
+---
+Job Seeker Dashboard
 ![image alt]()
 
 

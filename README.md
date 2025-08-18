@@ -28,6 +28,13 @@ Built with **Spring Boot**, **ReactJS**, and **MySQL**, with secure authenticati
 
 ## ⚡ Getting Started
 
+## 📸 Screenshots
+
+Employer Dashboard
+---
+![image alt]()
+
+
 ### 1️⃣ Clone the repo
 ```bash
 git clone https://github.com/yourusername/jobhub.git
@@ -47,13 +54,10 @@ cd frontend
 npm install
 npm start
 📸 Screenshots
-Add your app screenshots or demo GIFs here
-
-Homepage
-
-
 
 Employer Dashboard
+---
+![image alt]
 
 Job Seeker Dashboard
 
@@ -63,3 +67,4 @@ Shubham Patil
 GitHub: @yourusername
 
 LinkedIn: Your LinkedIn
+

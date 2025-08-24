@@ -2,18 +2,97 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Bell, User, Menu, MessageSquare, Settings } from 'lucide-react';
 
-
-
 const DashboardHeader = ({ sidebarOpen, setSidebarOpen }) => {
-  const [userName, setUserName] = useState("User");
-  
+  const [user, setUser] = useState({
+    name: "User",
+    email: "",
+    userType: "",
+    profilePicture: null
+  });
+
   useEffect(() => {
-  const storedUser = localStorage.getItem("user");
-  if (storedUser) {
-    const parsed = JSON.parse(storedUser);
-    setUserName(parsed.name || "User");
-  }
-}, []);
+    const fetchUserProfile = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        console.log('Token found:', !!token);
+        
+        if (token) {
+          console.log('Fetching user profile from API...');
+          const response = await fetch('/api/users/profile', {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          });
+
+          console.log('API Response status:', response.status);
+
+          if (response.ok) {
+            // ADD THIS LINE - this was missing!
+            const userData = await response.json();
+            console.log('User data from API:', userData);
+            console.log('Profile picture value:', userData.profilePicture);
+            
+            setUser({
+              name: `${userData.firstName} ${userData.lastName}`,
+              email: userData.email,
+              userType: userData.userType === 'EMPLOYER' ? 'Employer' : 'Job Seeker',
+              profilePicture: userData.profilePicture
+            });
+          }
+        } else {
+          // Fallback to localStorage if no token
+          const storedUser = localStorage.getItem("user");
+          if (storedUser) {
+            const parsed = JSON.parse(storedUser);
+            console.log('Using localStorage fallback:', parsed);
+            setUser({
+              name: `${parsed.firstName} ${parsed.lastName}`,
+              email: parsed.email,
+              userType: parsed.userType === 'EMPLOYER' ? 'Employer' : 'Job Seeker',
+              profilePicture: parsed.profilePicture
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+        // Fallback to localStorage on error
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+          const parsed = JSON.parse(storedUser);
+          console.log('Error fallback user data:', parsed);
+          setUser({
+            name: `${parsed.firstName} ${parsed.lastName}`,
+            email: parsed.email,
+            userType: parsed.userType === 'EMPLOYER' ? 'Employer' : 'Job Seeker',
+            profilePicture: parsed.profilePicture
+          });
+        }
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
+
+  const getProfilePictureUrl = () => {
+    console.log('Getting profile picture for:', user.name, 'Profile pic:', user.profilePicture);
+    
+    if (user.profilePicture && user.profilePicture !== 'null' && user.profilePicture.trim() !== '') {
+      if (user.profilePicture.startsWith('http')) {
+        return user.profilePicture;
+      }
+      return `http://localhost:8080${user.profilePicture}`;
+    }
+    
+    // Create avatar with user's initials since profilePicture is null
+    if (user.name && user.name !== "User") {
+      const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
+      return `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=3b82f6&color=fff&size=100&font-size=0.5`;
+    }
+    
+    // Ultimate fallback
+    return "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop";
+  };
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 fixed top-0 h-16 left-0 right-0 z-50 w-full">
@@ -62,15 +141,20 @@ const DashboardHeader = ({ sidebarOpen, setSidebarOpen }) => {
               </span>
             </button>
 
+            {/* User Profile Section */}
             <div className="flex items-center space-x-3">
               <img
-                src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop"
-                alt="Profile"
-                className="h-8 w-8 rounded-full object-cover"
+                src={getProfilePictureUrl()}
+                alt={`${user.name}'s profile`}
+                className="h-8 w-8 rounded-full object-cover border-2 border-gray-200"
+                onError={(e) => {
+                  console.log('Image failed to load, using fallback');
+                  e.target.src = "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.name) + "&background=ef4444&color=fff&size=100";
+                }}
               />
               <div className="hidden md:block">
-                <p className="text-sm font-medium text-gray-900">{userName}</p>
-                <p className="text-xs text-gray-500">Software Engineer</p>
+                <p className="text-sm font-medium text-gray-900">{user.name}</p>
+                <p className="text-xs text-gray-500">{user.email}</p>
               </div>
             </div>
           </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   FileText, 
   Clock, 
@@ -7,93 +7,100 @@ import {
   Calendar,
   Eye,
   MessageSquare,
-  Filter
+  Loader
 } from 'lucide-react';
 
 const Applications = () => {
   const [activeFilter, setActiveFilter] = useState('all');
+  const [applications, setApplications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const applications = [
-    {
-      id: 1,
-      title: 'Senior Frontend Developer',
-      company: 'TechCorp Inc.',
-      appliedDate: '2024-01-15',
-      status: 'interview',
-      statusText: 'Interview Scheduled',
-      statusColor: 'bg-green-100 text-green-800',
-      logo: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=60&h=60&fit=crop',
-      salary: '$120k - $150k',
-      location: 'San Francisco, CA',
-      interviewDate: '2024-01-20',
-      notes: 'Technical interview with the engineering team'
-    },
-    {
-      id: 2,
-      title: 'Product Manager',
-      company: 'InnovateLab',
-      appliedDate: '2024-01-12',
-      status: 'review',
-      statusText: 'Under Review',
-      statusColor: 'bg-yellow-100 text-yellow-800',
-      logo: 'https://images.pexels.com/photos/3184338/pexels-photo-3184338.jpeg?auto=compress&cs=tinysrgb&w=60&h=60&fit=crop',
-      salary: '$100k - $130k',
-      location: 'New York, NY',
-      notes: 'Application submitted with portfolio'
-    },
-    {
-      id: 3,
-      title: 'UX Designer',
-      company: 'DesignStudio',
-      appliedDate: '2024-01-10',
-      status: 'rejected',
-      statusText: 'Not Selected',
-      statusColor: 'bg-red-100 text-red-800',
-      logo: 'https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=60&h=60&fit=crop',
-      salary: '$80k - $100k',
-      location: 'Austin, TX',
-      notes: 'Position filled by internal candidate'
-    },
-    {
-      id: 4,
-      title: 'Data Scientist',
-      company: 'DataFlow Analytics',
-      appliedDate: '2024-01-08',
-      status: 'applied',
-      statusText: 'Application Sent',
-      statusColor: 'bg-blue-100 text-blue-800',
-      logo: 'https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=60&h=60&fit=crop',
-      salary: '$110k - $140k',
-      location: 'Seattle, WA',
-      notes: 'Waiting for initial response'
-    },
-    {
-      id: 5,
-      title: 'DevOps Engineer',
-      company: 'CloudTech Solutions',
-      appliedDate: '2024-01-05',
-      status: 'offer',
-      statusText: 'Offer Received',
-      statusColor: 'bg-purple-100 text-purple-800',
-      logo: 'https://images.pexels.com/photos/3184317/pexels-photo-3184317.jpeg?auto=compress&cs=tinysrgb&w=60&h=60&fit=crop',
-      salary: '$95k - $125k',
-      location: 'Denver, CO',
-      notes: 'Offer expires on January 25th'
-    }
-  ];
+  // Fetch applications from your existing API
+  useEffect(() => {
+    const fetchApplications = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem('token');
+        
+        if (!token) {
+          throw new Error('No authentication token found');
+        }
 
-  const filters = [
-    { id: 'all', label: 'All Applications', count: applications.length },
-    { id: 'applied', label: 'Applied', count: applications.filter(app => app.status === 'applied').length },
-    { id: 'review', label: 'Under Review', count: applications.filter(app => app.status === 'review').length },
-    { id: 'interview', label: 'Interview', count: applications.filter(app => app.status === 'interview').length },
-    { id: 'offer', label: 'Offers', count: applications.filter(app => app.status === 'offer').length },
-    { id: 'rejected', label: 'Rejected', count: applications.filter(app => app.status === 'rejected').length }
-  ];
+        const response = await fetch('/api/applications/my-applications', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
 
-  const filteredApplications = activeFilter === 'all' 
-    ? applications 
-    : applications.filter(app => app.status === activeFilter);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Applications data:', data);
+        
+        // Transform API data to match component structure
+        const transformedApplications = data.content.map(app => ({
+          id: app.id,
+          title: app.jobTitle,
+          company: app.company,
+          appliedDate: app.appliedAt,
+          status: app.status.toLowerCase(),
+          statusText: getStatusText(app.status),
+          statusColor: getStatusColor(app.status),
+          logo: app.companyLogo || 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=60&h=60&fit=crop',
+          salary: formatSalary(app.salaryMin, app.salaryMax),
+          location: app.jobLocation || 'Location not specified',
+          interviewDate: app.interviewDate,
+          notes: app.notes || ''
+        }));
+
+        setApplications(transformedApplications);
+      } catch (err) {
+        console.error('Error fetching applications:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchApplications();
+  }, []);
+
+  // Helper function to format salary
+  const formatSalary = (min, max) => {
+    if (!min && !max) return 'Salary not specified';
+    if (!max) return `$${min}k+`;
+    if (!min) return `Up to $${max}k`;
+    return `$${min}k - $${max}k`;
+  };
+
+  // Helper functions to map status from API
+  const getStatusText = (status) => {
+    const statusMap = {
+      'APPLIED': 'Application Sent',
+      'REVIEW': 'Under Review', 
+      'INTERVIEW': 'Interview Scheduled',
+      'OFFER': 'Offer Received',
+      'REJECTED': 'Not Selected',
+      'WITHDRAWN': 'Withdrawn'
+    };
+    return statusMap[status] || status;
+  };
+
+  const getStatusColor = (status) => {
+    const colorMap = {
+      'APPLIED': 'bg-blue-100 text-blue-800',
+      'REVIEW': 'bg-yellow-100 text-yellow-800',
+      'INTERVIEW': 'bg-green-100 text-green-800', 
+      'OFFER': 'bg-purple-100 text-purple-800',
+      'REJECTED': 'bg-red-100 text-red-800',
+      'WITHDRAWN': 'bg-gray-100 text-gray-800'
+    };
+    return colorMap[status] || 'bg-gray-100 text-gray-800';
+  };
 
   const getStatusIcon = (status) => {
     switch (status) {
@@ -112,13 +119,56 @@ const Applications = () => {
     }
   };
 
+  // Filter applications
+  const filters = [
+    { id: 'all', label: 'All Applications', count: applications.length },
+    { id: 'applied', label: 'Applied', count: applications.filter(app => app.status === 'applied').length },
+    { id: 'review', label: 'Under Review', count: applications.filter(app => app.status === 'review').length },
+    { id: 'interview', label: 'Interview', count: applications.filter(app => app.status === 'interview').length },
+    { id: 'offer', label: 'Offers', count: applications.filter(app => app.status === 'offer').length },
+    { id: 'rejected', label: 'Rejected', count: applications.filter(app => app.status === 'rejected').length }
+  ];
+
+  const filteredApplications = activeFilter === 'all' 
+    ? applications 
+    : applications.filter(app => app.status === activeFilter);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <Loader className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
+          <p className="text-gray-600">Loading your applications...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <XCircle className="h-16 w-16 text-red-300 mx-auto mb-4" />
+        <h3 className="text-lg font-medium text-gray-900 mb-2">Error loading applications</h3>
+        <p className="text-gray-600 mb-4">{error}</p>
+        <button 
+          onClick={() => window.location.reload()}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">My Applications</h1>
-          <p className="text-gray-600">Track your job application progress</p>
+          <p className="text-gray-600">Track your job application progress ({applications.length} total)</p>
         </div>
         <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
           Export Applications
@@ -283,7 +333,7 @@ const Applications = () => {
         ))}
       </div>
 
-      {filteredApplications.length === 0 && (
+      {filteredApplications.length === 0 && !loading && (
         <div className="text-center py-12">
           <FileText className="h-16 w-16 text-gray-300 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">No applications found</h3>

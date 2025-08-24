@@ -182,6 +182,10 @@ public class JobApplicationService {
         response.setJobId(application.getJob().getId());
         response.setJobTitle(application.getJob().getTitle());
         response.setCompany(application.getJob().getCompany());
+        response.setCompanyLogo(application.getJob().getCompanyLogo()); // Add this
+        response.setJobLocation(application.getJob().getLocation()); // Add this
+        response.setSalaryMin(application.getJob().getSalaryMin()); // Add this
+        response.setSalaryMax(application.getJob().getSalaryMax()); // Add this
         response.setUserId(application.getUser().getId());
         response.setUserName(application.getUser().getFirstName() + " " + application.getUser().getLastName());
         response.setStatus(application.getStatus());

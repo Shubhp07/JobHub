@@ -13,9 +13,13 @@ import {
   User
 } from 'lucide-react';
 
-
 const DashboardOverview = () => {
-  const [userName, setUserName] = useState("User");
+  const [user, setUser] = useState({
+    name: "User",
+    email: "",
+    userType: ""
+  });
+
   const stats = [
     { label: 'Applications Sent', value: '24', change: '+12%', icon: FileText, color: 'bg-blue-500' },
     { label: 'Profile Views', value: '156', change: '+8%', icon: Eye, color: 'bg-green-500' },
@@ -24,13 +28,68 @@ const DashboardOverview = () => {
   ];
 
   useEffect(() => {
-  const storedUser = localStorage.getItem("user");
-  if (storedUser) {
-    const parsed = JSON.parse(storedUser);
-    setUserName(parsed.name || "User");
-  }
-}, []);
+    const fetchUserProfile = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        
+        if (token) {
+          const response = await fetch('/api/users/profile', {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          });
 
+          if (response.ok) {
+            const userData = await response.json();
+            console.log('User data from API:', userData);
+            
+            setUser({
+              name: `${userData.firstName} ${userData.lastName}`,
+              email: userData.email,
+              userType: userData.userType === 'EMPLOYER' ? 'Employer' : 'Job Seeker'
+            });
+          } else {
+            // Fallback to localStorage if API fails
+            const storedUser = localStorage.getItem("user");
+            if (storedUser) {
+              const parsed = JSON.parse(storedUser);
+              setUser({
+                name: `${parsed.firstName} ${parsed.lastName}` || parsed.name || "User",
+                email: parsed.email || "",
+                userType: parsed.userType || "Job Seeker"
+              });
+            }
+          }
+        } else {
+          // No token, use localStorage fallback
+          const storedUser = localStorage.getItem("user");
+          if (storedUser) {
+            const parsed = JSON.parse(storedUser);
+            setUser({
+              name: `${parsed.firstName} ${parsed.lastName}` || parsed.name || "User",
+              email: parsed.email || "",
+              userType: parsed.userType || "Job Seeker"
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+        // Fallback to localStorage on error
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+          const parsed = JSON.parse(storedUser);
+          setUser({
+            name: `${parsed.firstName} ${parsed.lastName}` || parsed.name || "User",
+            email: parsed.email || "",
+            userType: parsed.userType || "Job Seeker"
+          });
+        }
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
 
   const recentApplications = [
     {
@@ -89,7 +148,7 @@ const DashboardOverview = () => {
     <div className="space-y-8 pt-6 px-6 pb-6">
       {/* Welcome Section */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white shadow-lg">
-        <h1 className="text-3xl font-bold mb-2">Welcome back, {userName}! 👋</h1>
+        <h1 className="text-3xl font-bold mb-2">Welcome back, {user.name}! 👋</h1>
         <p className="text-blue-100 mb-6">Here's what's happening with your job search today.</p>
         <div className="flex flex-wrap gap-4">
           <button className="bg-white text-blue-700 border border-blue-100 hover:bg-blue-50 px-6 py-2 rounded-lg font-medium transition-colors shadow">

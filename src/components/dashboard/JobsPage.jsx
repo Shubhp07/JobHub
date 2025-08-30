@@ -14,7 +14,7 @@ import {
   Star,
 } from "lucide-react";
 import { getAllJobs } from "../../api/jobs";
-import JobDetailsModal from "./JobDetailsModal"; // <-- Modal for job details
+import JobDetailsModal from "./JobDetailsModal";
 import { applyToJob as apiApplyToJob } from "../../api/applications";
 
 const JobsPage = () => {
@@ -25,9 +25,15 @@ const JobsPage = () => {
   const [experienceFilter, setExperienceFilter] = useState("");
   const [savedJobs, setSavedJobs] = useState(new Set());
   const [appliedJobs, setAppliedJobs] = useState(new Set());
-  const [selectedJob, setSelectedJob] = useState(null); // Modal for job details
+  const [selectedJob, setSelectedJob] = useState(null);
 
   useEffect(() => {
+    // Load applied jobs from localStorage on component mount
+    const savedAppliedJobs = localStorage.getItem('appliedJobs');
+    if (savedAppliedJobs) {
+      setAppliedJobs(new Set(JSON.parse(savedAppliedJobs)));
+    }
+
     async function fetchJobs() {
       try {
         const response = await getAllJobs();
@@ -51,28 +57,33 @@ const JobsPage = () => {
 
     try {
       await apiApplyToJob(job.id);
-      setAppliedJobs((prev) => new Set(prev).add(job.id));
-      // Optional: Show toast notification here, e.g. toast.success()
-
+      
+      // Update applied jobs state
+      const newAppliedJobs = new Set(appliedJobs).add(job.id);
+      setAppliedJobs(newAppliedJobs);
+      
+      // Save to localStorage for persistence
+      localStorage.setItem('appliedJobs', JSON.stringify([...newAppliedJobs]));
+      
       if (job.jobLink) {
         window.open(job.jobLink, "_blank", "noopener,noreferrer");
       }
     } catch (error) {
       console.error("Failed to apply for job:", error);
-      // Optional: Show error toast
+      
+      // If error says already applied, add to applied jobs to hide it
+      if (error.message && error.message.includes("already applied")) {
+        const newAppliedJobs = new Set(appliedJobs).add(job.id);
+        setAppliedJobs(newAppliedJobs);
+        localStorage.setItem('appliedJobs', JSON.stringify([...newAppliedJobs]));
+      }
     }
   };
 
-  // Null-safe helper to prevent .charAt() on null/undefined
   const safeFirstChar = (str) =>
     typeof str === "string" && str.length > 0 ? str.charAt(0) : "";
 
-  // Null-safe capitalize helper
-  const safeCapitalize = (str) =>
-    typeof str === "string" && str.length > 0
-      ? str.charAt(0).toUpperCase() + str.slice(1)
-      : "";
-
+  // Filter jobs to EXCLUDE applied jobs
   const filteredJobs = jobs.filter((job) => {
     const title = job.title || "";
     const company = job.company || "";
@@ -85,8 +96,11 @@ const JobsPage = () => {
       !locationFilter || location.toLowerCase().includes(locationFilter.toLowerCase());
     const matchesType = !jobTypeFilter || job.jobType === jobTypeFilter;
     const matchesExperience = !experienceFilter || job.experienceLevel === experienceFilter;
+    
+    // KEY: Exclude applied jobs
+    const notApplied = !appliedJobs.has(job.id);
 
-    return matchesSearch && matchesLocation && matchesType && matchesExperience;
+    return matchesSearch && matchesLocation && matchesType && matchesExperience && notApplied;
   });
 
   const toggleSaveJob = (jobId) => {
@@ -96,11 +110,6 @@ const JobsPage = () => {
       else newSaved.add(jobId);
       return newSaved;
     });
-  };
-
-  const applyToJob = (jobId) => {
-    setAppliedJobs((prev) => new Set([...prev, jobId]));
-    console.log("Applied to job:", jobId);
   };
 
   const renderStars = (rating) => {
@@ -144,9 +153,6 @@ const JobsPage = () => {
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
-              <div className="flex gap-2">
-                {/* You can add real filters here later */}
-              </div>
             </div>
           </div>
         </div>
@@ -155,7 +161,7 @@ const JobsPage = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-between mb-6">
           <p className="text-gray-600">
-            Showing {filteredJobs.length} of {jobs.length} jobs
+            Showing {filteredJobs.length} available jobs
           </p>
           <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
             <Filter className="w-4 h-4" />
@@ -278,14 +284,9 @@ const JobsPage = () => {
                     </button>
                     <button
                       onClick={() => handleApplyClick(job)}
-                      disabled={appliedJobs.has(job.id)}
-                      className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-                        appliedJobs.has(job.id)
-                          ? "bg-green-100 text-green-700 cursor-not-allowed"
-                          : "bg-blue-600 text-white hover:bg-blue-700"
-                      }`}
+                      className="px-6 py-2 rounded-lg font-medium transition-colors bg-blue-600 text-white hover:bg-blue-700"
                     >
-                      {appliedJobs.has(job.id) ? "Applied ✓" : "Apply Now"}
+                      Apply Now
                     </button>
                   </div>
                 </div>
@@ -294,13 +295,13 @@ const JobsPage = () => {
           })}
         </div>
 
-        {filteredJobs.length === 0 && (
+        {filteredJobs.length === 0 && jobs.length > 0 && (
           <div className="text-center py-12">
-            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Search className="w-12 h-12 text-gray-400" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No jobs found</h3>
-            <p className="text-gray-600">Try adjusting your search criteria or filters</p>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">No available jobs found</h3>
+            <p className="text-gray-600">All jobs matching your criteria have been applied to or try adjusting your search filters</p>
           </div>
         )}
 

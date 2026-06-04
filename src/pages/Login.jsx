@@ -40,7 +40,7 @@ const Login = () => {
         "http://localhost:8080/api/auth/login",
         formData,
         {
-          headers: { "Content-Type": "application/json" },
+          credentials: "include", headers: { "Content-Type": "application/json" }, withCredentials: true,
         }
       );
       console.log("Login response full:", response.data);
@@ -57,8 +57,8 @@ const Login = () => {
           profilePicture,
         } = response.data;
 
-        localStorage.setItem("token", accessToken);
-        localStorage.setItem("refreshToken", refreshToken);
+        
+        
         localStorage.setItem(
           "user",
           JSON.stringify({ fullName, email, userType, userId, profilePicture })

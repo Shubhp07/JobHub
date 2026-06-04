@@ -11,7 +11,7 @@ export async function createJob(jobData) {
 
   const response = await fetch('http://localhost:8080/api/jobs', {
     method: 'POST',
-    headers: {
+    credentials: "include", headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
     },
@@ -33,7 +33,7 @@ export async function getAllJobs(page = 0, size = 5) {
   const response = await fetch(
     `http://localhost:8080/api/jobs?page=${page}&size=${size}`,
     {
-      headers: {
+      credentials: "include", headers: {
         Authorization: `Bearer ${token}`, 
       },
     }
@@ -58,7 +58,7 @@ export async function getMyJobs(page = 0, size = 10) {
   const response = await fetch(
     `http://localhost:8080/api/jobs/my-jobs?page=${page}&size=${size}`,
     {
-      headers: {
+      credentials: "include", headers: {
         Authorization: `Bearer ${token}`,
       },
     }

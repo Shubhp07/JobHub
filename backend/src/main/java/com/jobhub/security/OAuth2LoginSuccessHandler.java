@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import com.jobhub.user.User;
 import com.jobhub.user.UserType;
 import com.jobhub.user.UserRepository;
-import com.jobhub.security.jwt.JwtHelper;
+import com.jobhub.security.JwtTokenProvider;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,11 +22,11 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
-    private final JwtHelper jwtHelper;
+    private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
 
-    public OAuth2LoginSuccessHandler(JwtHelper jwtHelper, UserRepository userRepository) {
-        this.jwtHelper = jwtHelper;
+    public OAuth2LoginSuccessHandler(JwtTokenProvider jwtTokenProvider, UserRepository userRepository) {
+        this.jwtTokenProvider = jwtTokenProvider;
         this.userRepository = userRepository;
     }
 
@@ -65,12 +65,20 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         List<String> roles = List.of(userRole);
 
         // ✅ Generate JWT with the correct email and roles
-        String token = jwtHelper.generateToken(user.getEmail(), roles);
+        String token = jwtTokenProvider.generateToken(user.getEmail(), roles);
 
-        // Redirect to the frontend with the token
+        // ✅ Set HttpOnly cookie
+        org.springframework.http.ResponseCookie cookie = org.springframework.http.ResponseCookie.from("jwt", token)
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(24 * 60 * 60)
+                .build();
+        response.addHeader(org.springframework.http.HttpHeaders.SET_COOKIE, cookie.toString());
+
+        // Redirect to the frontend without the token in the URL
         String redirectUrl = "http://localhost:5173/login/oauth-success" +
-                "?token=" + URLEncoder.encode(token, StandardCharsets.UTF_8) +
-                "&name=" + URLEncoder.encode(user.getFirstName(), StandardCharsets.UTF_8) +
+                "?name=" + URLEncoder.encode(user.getFirstName(), StandardCharsets.UTF_8) +
                 "&email=" + URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8);
 
         System.out.println("Redirecting OAuth user to: " + redirectUrl);

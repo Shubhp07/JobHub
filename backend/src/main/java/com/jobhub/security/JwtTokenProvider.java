@@ -72,21 +72,64 @@ public class JwtTokenProvider {
     }
 
     public String generateRefreshToken(Authentication authentication) {
-    UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
-    Date expiryDate = new Date(System.currentTimeMillis() + jwtRefreshExpirationInMs);
+        UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
+        Date expiryDate = new Date(System.currentTimeMillis() + jwtRefreshExpirationInMs);
 
-    List<String> roles = authentication.getAuthorities()
-            .stream()
-            .map(auth -> auth.getAuthority().replace("ROLE_", ""))
-            .collect(Collectors.toList());
+        List<String> roles = authentication.getAuthorities()
+                .stream()
+                .map(auth -> auth.getAuthority().replace("ROLE_", ""))
+                .collect(Collectors.toList());
 
-    return Jwts.builder()
-            .setSubject(userPrincipal.getUsername())
-            .claim("roles", roles)
-            .setIssuedAt(new Date())
-            .setExpiration(expiryDate)
-            .signWith(getSigningKey(), SignatureAlgorithm.HS512)
-            .compact();
-}
+        return Jwts.builder()
+                .setSubject(userPrincipal.getUsername())
+                .claim("roles", roles)
+                .setIssuedAt(new Date())
+                .setExpiration(expiryDate)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
+                .compact();
+    }
+
+    // --- Added from JwtHelper for unification ---
+
+    @Value("${app.jwt.verificationExpirationMs:900000}")
+    private long jwtVerificationExpirationMs;
+
+    @Value("${app.jwt.resetExpirationMs:900000}")
+    private long jwtResetExpirationMs;
+
+    public String generateToken(String email, List<String> roles) {
+        Date expiryDate = new Date(System.currentTimeMillis() + jwtExpirationInMs);
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("roles", roles)
+                .setIssuedAt(new Date())
+                .setExpiration(expiryDate)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
+                .compact();
+    }
+
+    public String generateEmailVerificationToken(String email) {
+        Date expiryDate = new Date(System.currentTimeMillis() + jwtVerificationExpirationMs);
+        return Jwts.builder()
+                .setSubject(email)
+                .setIssuedAt(new Date())
+                .setExpiration(expiryDate)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
+                .compact();
+    }
+
+    public String generatePasswordResetToken(String email) {
+        Date expiryDate = new Date(System.currentTimeMillis() + jwtResetExpirationMs);
+        return Jwts.builder()
+                .setSubject(email)
+                .setIssuedAt(new Date())
+                .setExpiration(expiryDate)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
+                .compact();
+    }
+
+    public String getUsernameFromToken(String token) {
+        return getClaimsFromToken(token).getSubject();
+    }
 
 }

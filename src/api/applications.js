@@ -8,7 +8,7 @@ export const applyToJob = async (jobId) => {
   // We will send this in the body.
   const response = await fetch(`http://localhost:8080/api/applications`, {
     method: 'POST',
-    headers: {
+    credentials: "include", headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     },
@@ -30,7 +30,7 @@ export const getApplicantsForJob = async (jobId) => {
   // This endpoint matches the getJobApplications method in your service.
   // We pass the jobId in the URL and the backend gets the employer from the token.
   const response = await fetch(`http://localhost:8080/api/applications/job/${jobId}`, {
-    headers: { 'Authorization': `Bearer ${token}` }
+    credentials: "include", headers: { 'Authorization': `Bearer ${token}` }
   });
 
   if (!response.ok) {

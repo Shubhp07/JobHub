@@ -19,7 +19,7 @@ const DashboardHeader = ({ sidebarOpen, setSidebarOpen }) => {
         if (token) {
           console.log('Fetching user profile from API...');
           const response = await fetch('/api/users/profile', {
-            headers: {
+            credentials: "include", headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
             }

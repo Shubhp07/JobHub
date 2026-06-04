@@ -60,7 +60,7 @@ const SignIn = () => {
       "http://localhost:8080/api/auth/register",
       payload,
       {
-        headers: {
+        credentials: "include", headers: {
           "Content-Type": "application/json",
         },
       }

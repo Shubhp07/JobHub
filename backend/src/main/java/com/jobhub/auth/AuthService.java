@@ -18,7 +18,7 @@ import com.jobhub.user.User;
 import com.jobhub.exception.BadRequestException;
 import com.jobhub.exception.ResourceNotFoundException;
 import com.jobhub.user.UserRepository;
-import com.jobhub.security.jwt.JwtHelper;
+import com.jobhub.security.JwtTokenProvider;
 
 @Service
 @Transactional
@@ -34,7 +34,7 @@ public class AuthService {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private JwtHelper tokenProvider;
+    private JwtTokenProvider tokenProvider;
 
     @Autowired
     private EmailService emailService;
@@ -106,7 +106,7 @@ public class AuthService {
     public void logout(String token) {
         // Add token to blacklist (implement token blacklisting if needed)
         // For now, we'll just validate the token
-        tokenProvider.validateToken(token.substring(7)); // Remove "Bearer " prefix
+        tokenProvider.validateToken(token); 
     }
 
     public LoginResponse refreshToken(String token) {

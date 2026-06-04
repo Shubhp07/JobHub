@@ -29,13 +29,20 @@ const Sidebar = ({ activeTab, setActiveTab, onPostJob }) => {
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
-  const handleLogout = () => {
-    // This is the function that runs when the logout button is clicked
-    console.log("Logout initiated...");
-    
-    // Clear the user's session from the browser
+  const handleLogout = async () => {
+    console.log("Logout clicked");
+    try {
+      await fetch("http://localhost:8080/api/auth/logout", {
+        method: "POST",
+        credentials: "include"
+      });
+    } catch (e) {
+      console.error("Logout failed on backend", e);
+    }
+    // Clear user data
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("refreshToken");
     
     // ✅ 3. Use the navigate function to redirect the user
     // The 'replace: true' option prevents the user from using the browser's

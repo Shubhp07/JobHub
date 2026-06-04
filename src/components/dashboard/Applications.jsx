@@ -28,7 +28,7 @@ const Applications = () => {
         }
 
         const response = await fetch('/api/applications/my-applications', {
-          headers: {
+          credentials: "include", headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           }

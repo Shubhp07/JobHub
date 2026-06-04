@@ -40,14 +40,40 @@ public class AuthController {
     @Operation(summary = "Login user")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         LoginResponse response = authService.login(request);
-        return ResponseEntity.ok(response);
+        
+        org.springframework.http.ResponseCookie cookie = org.springframework.http.ResponseCookie.from("jwt", response.getAccessToken())
+                .httpOnly(true)
+                .secure(false) // Set to true if using HTTPS
+                .path("/")
+                .maxAge(24 * 60 * 60)
+                .build();
+                
+        return ResponseEntity.ok()
+                .header(org.springframework.http.HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(response);
     }
 
     @PostMapping("/logout")
     @Operation(summary = "Logout user")
-    public ResponseEntity<String> logout(@RequestHeader("Authorization") String token) {
-        authService.logout(token);
-        return ResponseEntity.ok("Logged out successfully");
+    public ResponseEntity<String> logout(
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @org.springframework.web.bind.annotation.CookieValue(value = "jwt", required = false) String jwtCookie) {
+        
+        String token = jwtCookie != null ? jwtCookie : (authHeader != null && authHeader.startsWith("Bearer ") ? authHeader.substring(7) : null);
+        if (token != null) {
+            authService.logout(token);
+        }
+        
+        org.springframework.http.ResponseCookie cookie = org.springframework.http.ResponseCookie.from("jwt", "")
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(0) // delete cookie
+                .build();
+
+        return ResponseEntity.ok()
+                .header(org.springframework.http.HttpHeaders.SET_COOKIE, cookie.toString())
+                .body("Logged out successfully");
     }
 
     @PostMapping("/refresh")

@@ -113,7 +113,7 @@ const JobEditModal = ({ job, onClose, onUpdate }) => {
 
       const response = await fetch(`http://localhost:8080/api/jobs/${job.id}`, {
         method: "PUT",
-        headers: {
+        credentials: "include", headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },

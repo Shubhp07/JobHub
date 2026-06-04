@@ -7,23 +7,20 @@ const OAuthSuccess = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = params.get('token');
-    
-    if (!token) {
-      navigate('/login', { replace: true });
-      return;
-    }
-
-    localStorage.setItem('token', token);
+    // The JWT is now securely stored in an HttpOnly cookie, so we don't
+    // need to extract it from the URL. The browser will automatically 
+    // send it with the fetch request below thanks to credentials: "include".
 
     fetch('http://localhost:8080/api/users/profile', {
-      headers: { Authorization: `Bearer ${token}` },
+      credentials: "include", 
+      headers: { "Content-Type": "application/json" },
     })
       .then(res => {
         if (!res.ok) throw new Error(`API error: ${res.status}`);
         return res.json();
       })
       .then(user => {
+        // Store user details for UI state
         localStorage.setItem('user', JSON.stringify(user));
 
         // ✅ THE FIX: Compare against 'EMPLOYER' and 'JOBSEEKER' (no underscores)
@@ -44,7 +41,7 @@ const OAuthSuccess = () => {
         navigate('/login', { replace: true });
       });
 
-  }, [navigate, params]);
+  }, [navigate]);
 
   return (
     <div className="flex items-center justify-center min-h-screen">

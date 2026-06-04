@@ -73,7 +73,7 @@ const Profile = () => {
         setLoading(true);
 
         const res = await fetch("/api/users/profile", {
-          headers: {
+          credentials: "include", headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
@@ -208,7 +208,7 @@ const Profile = () => {
 
       const res = await fetch("/api/users/profile", {
         method: "PUT",
-        headers: {
+        credentials: "include", headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
@@ -241,7 +241,7 @@ const Profile = () => {
 
       const response = await fetch("/api/users/resume", {
         method: "POST",
-        headers: {
+        credentials: "include", headers: {
           Authorization: `Bearer ${token}`,
         },
         body: formData,

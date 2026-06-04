@@ -27,13 +27,20 @@ const Sidebar = ({ activeTab, setActiveTab, onPostJob }) => {
     { id: "profile", label: "Profile", icon: User },
   ];
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     console.log("Logout clicked");
-    // Clear token and any other user data
+    try {
+      await fetch("http://localhost:8080/api/auth/logout", {
+        method: "POST",
+        credentials: "include"
+      });
+    } catch (e) {
+      console.error("Logout failed on backend", e);
+    }
+    // Clear user data
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    // You can add toast notification here if needed
-    // Redirect logic can be added here
+    localStorage.removeItem("refreshToken");
     navigate("/login");
   };
 

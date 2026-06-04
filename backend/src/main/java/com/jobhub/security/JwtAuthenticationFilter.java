@@ -81,10 +81,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     /**
-     * Helper method to extract JWT token from Authorization header.
-     * It expects the header in the format: "Bearer <token>"
+     * Helper method to extract JWT token from HttpOnly cookie or Authorization header.
      */
     private String getJwtFromRequest(HttpServletRequest request) {
+        // 1. Try to get token from cookie
+        if (request.getCookies() != null) {
+            for (jakarta.servlet.http.Cookie cookie : request.getCookies()) {
+                if ("jwt".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+
+        // 2. Fallback to Authorization header
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7); // Remove "Bearer " prefix

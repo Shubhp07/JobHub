@@ -8,7 +8,7 @@ const RequireAuth = ({ children }) => {
 
   // Your logic to check for an authentication token
   // This is the most common way: checking localStorage.
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('user');
 
   if (!token) {
     // If the user is not authenticated, redirect them to the login page.

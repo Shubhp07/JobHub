@@ -34,7 +34,7 @@ const DashboardOverview = () => {
         
         if (token) {
           const response = await fetch('/api/users/profile', {
-            headers: {
+            credentials: "include", headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
             }

@@ -27,6 +27,8 @@ public interface JobRepository extends JpaRepository<Job, Long> {
 
     Page<Job> findByEmployer(User employer, Pageable pageable);
 
+    long countByEmployer(User employer);
+
     @Query("SELECT COUNT(j) FROM Job j WHERE j.employer.id = :employerId AND j.status = :status")
     int countByEmployer_IdAndStatus(@Param("employerId") Long employerId, @Param("status") Job.JobStatus status);
 

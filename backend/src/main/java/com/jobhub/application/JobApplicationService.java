@@ -171,7 +171,7 @@ public class JobApplicationService {
             // Add more job seeker specific stats
         } else if (user.getUserType() == UserType.EMPLOYER) {
             // Add employer specific stats
-            stats.put("totalJobsPosted", jobRepository.findByEmployer(user, Pageable.unpaged()).getTotalElements());
+            stats.put("totalJobsPosted", jobRepository.countByEmployer(user));
         }
 
         return stats;
@@ -201,7 +201,6 @@ public class JobApplicationService {
             System.out.println("Using profile resumeUrl: " + resumeUrl);
         }
 
-        response.setResumeUrl(resumeUrl);
         response.setResumeUrl(resumeUrl);
         response.setNotes(application.getNotes());
         response.setInterviewDate(application.getInterviewDate());

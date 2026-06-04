@@ -22,9 +22,9 @@ target/
 !.env.example
 
 # Spring Boot properties with secrets
-src/main/resources/application.properties
-src/main/resources/application-*.properties
-!src/main/resources/application-example.properties
+backend/src/main/resources/application.properties
+backend/src/main/resources/application-*.properties
+!backend/src/main/resources/application-example.properties
 
 # Editor directories and files
 *.local

@@ -10,6 +10,7 @@ import LandingPage from './pages/LandingPage.jsx';
 import SignIn from './pages/SignIn.jsx'; // Make sure this component exists
 import Login from './pages/Login.jsx';
 import OAuthSuccess from './pages/OAuthSuccess.jsx';
+import VerifyEmail from './pages/VerifyEmail.jsx';
 import DashboardLayout from './layouts/DashboardLayout.jsx';
 
 // --- Import the Guard Components ---
@@ -30,6 +31,7 @@ const App = () => {
             <Route path="/signin" element={<SignIn />} /> 
             
             <Route path="/login/oauth-success" element={<OAuthSuccess />} />
+            <Route path="/verify-email" element={<VerifyEmail />} />
             
             {/* --- Protected Routes (Role-Based) --- */}
             <Route

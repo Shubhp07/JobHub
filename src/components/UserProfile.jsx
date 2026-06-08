@@ -55,7 +55,7 @@ const UserProfile = ({ userId = null, isOwnProfile = true }) => {
   const handleInputChange = (field, value) => {
     setProfileData((prev) => ({
       ...prev,
-      resumeUrl: response.resumeUrl, // response.resumeUrl is just the string you need
+      [field]: value,
     }));
   };
 

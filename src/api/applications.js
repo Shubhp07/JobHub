@@ -1,17 +1,19 @@
 // src/api/applications.js
 
-export const applyToJob = async (jobId) => {
+const getAuthHeaders = () => {
   const token = localStorage.getItem('token');
-  if (!token) throw new Error("No auth token found. Please log in.");
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
+};
 
-  // The DTO on your backend is ApplicationCreateRequest, which expects a jobId.
-  // We will send this in the body.
+export const applyToJob = async (jobId) => {
   const response = await fetch(`http://localhost:8080/api/applications`, {
     method: 'POST',
-    credentials: "include", headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    },
+    credentials: "include",
+    headers: getAuthHeaders(),
     body: JSON.stringify({ jobId: jobId })
   });
 
@@ -24,13 +26,9 @@ export const applyToJob = async (jobId) => {
 };
 
 export const getApplicantsForJob = async (jobId) => {
-  const token = localStorage.getItem('token');
-  if (!token) throw new Error("No auth token found.");
-
-  // This endpoint matches the getJobApplications method in your service.
-  // We pass the jobId in the URL and the backend gets the employer from the token.
   const response = await fetch(`http://localhost:8080/api/applications/job/${jobId}`, {
-    credentials: "include", headers: { 'Authorization': `Bearer ${token}` }
+    credentials: "include",
+    headers: getAuthHeaders()
   });
 
   if (!response.ok) {
@@ -38,5 +36,5 @@ export const getApplicantsForJob = async (jobId) => {
   }
 
   const data = await response.json();
-  return data.content; // Your backend returns a Page object, we want the content array
+  return data.content;
 };

@@ -33,15 +33,12 @@ const EmployerDashboard = () => {
     const [activeTab, setActiveTab] = useState('jobs');
     const [isAuthReady, setIsAuthReady] = useState(false);
 
-    // This effect ensures we don't render the dashboard until we've
-    // confirmed the user is "logged in" (i.e., token exists).
     useEffect(() => {
         const token = localStorage.getItem('token');
-        if (token) {
+        const storedUser = localStorage.getItem('user');
+        if (token || storedUser) {
             setIsAuthReady(true);
         } else {
-            // This case should ideally be handled by your RequireAuth component,
-            // which would redirect to the login page.
             console.error("Authentication check failed. Redirecting to login is recommended.");
         }
     }, []);

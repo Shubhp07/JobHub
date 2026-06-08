@@ -16,6 +16,7 @@ const SignIn = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -67,19 +68,7 @@ const SignIn = () => {
     );
 
     if (response.status === 200) {
-      // Save user data from response, if available
-      // Adjust if response.data contains user info, else save from formData
-      localStorage.setItem("userType", formData.userType);
-      localStorage.setItem("userEmail", formData.email);
-
-      // Navigate based on userType
-      if (formData.userType.toLowerCase() === "jobseeker") {
-        navigate("/dashboard/jobseeker");
-      } else if (formData.userType.toLowerCase() === "employer") {
-        navigate("/dashboard/employer");
-      } else {
-        navigate("/");
-      }
+      setShowSuccess(true);
     } else {
       alert("Registration failed. Please try again.");
     }
@@ -92,6 +81,35 @@ const SignIn = () => {
   }
 };
 
+
+  if (showSuccess) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8">
+          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 text-center">
+            <div className="flex justify-center mb-4">
+              <div className="bg-green-100 p-3 rounded-full">
+                <CheckCircle className="h-12 w-12 text-green-600" />
+              </div>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Registration Successful!</h2>
+            <p className="text-gray-600 mb-2">
+              Your account has been created. Please check your email to verify your account before logging in.
+            </p>
+            <p className="text-sm text-gray-500 mb-6">
+              Didn't receive the email? Check your spam folder or try again.
+            </p>
+            <Link
+              to="/login"
+              className="inline-block w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors duration-200"
+            >
+              Go to Login
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">

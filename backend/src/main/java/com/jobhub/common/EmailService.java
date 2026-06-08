@@ -31,7 +31,7 @@ public class EmailService {
             String emailBody = "Welcome to JobHub!\n\n" +
                     "Please click the link below to verify your email address:\n" +
                     verificationUrl + "\n\n" +
-                    "This link will expire in 24 hours.\n\n" +
+                    "This link will expire in 15 minutes.\n\n" +
                     "If you didn't create an account with JobHub, please ignore this email.\n\n" +
                     "Best regards,\n" +
                     "The JobHub Team";

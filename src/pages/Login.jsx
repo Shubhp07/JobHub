@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+
 import {
   Search,
   Eye,
@@ -11,8 +11,7 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import React, { useState } from "react";
-import { GoogleLogin } from "@react-oauth/google";
-import { jwtDecode } from "jwt-decode";
+import { useNavigate, Link } from "react-router-dom";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -59,6 +58,8 @@ const Login = () => {
 
         
         
+        localStorage.setItem("token", accessToken);
+        localStorage.setItem("refreshToken", refreshToken);
         localStorage.setItem(
           "user",
           JSON.stringify({ fullName, email, userType, userId, profilePicture })
@@ -177,12 +178,12 @@ const Login = () => {
                   Remember me
                 </label>
               </div>
-              <a
-                href="#"
+              <Link
+                to="/forgot-password"
                 className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors"
               >
                 Forgot password?
-              </a>
+              </Link>
             </div>
 
             <button

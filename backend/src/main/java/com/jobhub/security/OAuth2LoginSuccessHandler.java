@@ -76,10 +76,11 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 .build();
         response.addHeader(org.springframework.http.HttpHeaders.SET_COOKIE, cookie.toString());
 
-        // Redirect to the frontend without the token in the URL
+        // Redirect to the frontend with token for frontend state management
         String redirectUrl = "http://localhost:5173/login/oauth-success" +
                 "?name=" + URLEncoder.encode(user.getFirstName(), StandardCharsets.UTF_8) +
-                "&email=" + URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8);
+                "&email=" + URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8) +
+                "&access_token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
 
         System.out.println("Redirecting OAuth user to: " + redirectUrl);
         response.sendRedirect(redirectUrl);

@@ -69,14 +69,14 @@ const Profile = () => {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem("token");
-        if (!token) throw new Error("User is not authenticated");
+        const headers = { "Content-Type": "application/json" };
+        if (token) {
+          headers["Authorization"] = `Bearer ${token}`;
+        }
         setLoading(true);
 
         const res = await fetch("/api/users/profile", {
-          credentials: "include", headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
+          credentials: "include", headers,
         });
 
         if (!res.ok) throw new Error("Failed to fetch profile");
@@ -166,23 +166,12 @@ const Profile = () => {
       education: [...prev.education, newEdu],
     }));
   };
-  // Similar validation for education
-  const handleEducationUpdate = (index, field, value) => {
-    const updatedEdu = { ...education[index], [field]: value };
-
-    if (field === "startDate" || field === "endDate") {
-      const validation = validateDateRange(
-        updatedEdu.startDate,
-        updatedEdu.endDate
-      );
-      if (!validation.valid) {
-        setDateError(validation.message);
-        return;
-      }
-      setDateError("");
-    }
-
-    onUpdate(index, updatedEdu);
+  const handleEducationUpdate = (index, updatedEdu) => {
+    setProfileData((prev) => {
+      const updated = [...prev.education];
+      updated[index] = updatedEdu;
+      return { ...prev, education: updated };
+    });
   };
 
   const handleEducationRemove = (index) => {
@@ -198,7 +187,10 @@ const Profile = () => {
       setLoading(true);
       setError("");
       const token = localStorage.getItem("token");
-      if (!token) throw new Error("User is not authenticated");
+      const headers = { "Content-Type": "application/json" };
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
 
       if (!profileData.firstName.trim() || !profileData.lastName.trim()) {
         setError("First and Last name are required");
@@ -208,10 +200,7 @@ const Profile = () => {
 
       const res = await fetch("/api/users/profile", {
         method: "PUT",
-        credentials: "include", headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: "include", headers,
         body: JSON.stringify(profileData),
       });
 
@@ -236,14 +225,16 @@ const Profile = () => {
     setResumeError("");
     try {
       const token = localStorage.getItem("token");
+      const headers = {};
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
       const formData = new FormData();
       formData.append("file", resumeFile);
 
       const response = await fetch("/api/users/resume", {
         method: "POST",
-        credentials: "include", headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: "include", headers,
         body: formData,
       });
 

@@ -31,60 +31,37 @@ const DashboardOverview = () => {
     const fetchUserProfile = async () => {
       try {
         const token = localStorage.getItem('token');
-        
+        const headers = { 'Content-Type': 'application/json' };
         if (token) {
-          const response = await fetch('/api/users/profile', {
-            credentials: "include", headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            }
-          });
+          headers['Authorization'] = `Bearer ${token}`;
+        }
 
-          if (response.ok) {
-            const userData = await response.json();
-            console.log('User data from API:', userData);
-            
-            setUser({
-              name: `${userData.firstName} ${userData.lastName}`,
-              email: userData.email,
-              userType: userData.userType === 'EMPLOYER' ? 'Employer' : 'Job Seeker'
-            });
-          } else {
-            // Fallback to localStorage if API fails
-            const storedUser = localStorage.getItem("user");
-            if (storedUser) {
-              const parsed = JSON.parse(storedUser);
-              setUser({
-                name: `${parsed.firstName} ${parsed.lastName}` || parsed.name || "User",
-                email: parsed.email || "",
-                userType: parsed.userType || "Job Seeker"
-              });
-            }
-          }
-        } else {
-          // No token, use localStorage fallback
-          const storedUser = localStorage.getItem("user");
-          if (storedUser) {
-            const parsed = JSON.parse(storedUser);
-            setUser({
-              name: `${parsed.firstName} ${parsed.lastName}` || parsed.name || "User",
-              email: parsed.email || "",
-              userType: parsed.userType || "Job Seeker"
-            });
-          }
+        const response = await fetch('/api/users/profile', {
+          credentials: "include", headers
+        });
+
+        if (response.ok) {
+          const userData = await response.json();
+          setUser({
+            name: `${userData.firstName} ${userData.lastName}`,
+            email: userData.email,
+            userType: userData.userType === 'EMPLOYER' ? 'Employer' : 'Job Seeker'
+          });
+          return;
         }
       } catch (error) {
         console.error('Error fetching user profile:', error);
-        // Fallback to localStorage on error
-        const storedUser = localStorage.getItem("user");
-        if (storedUser) {
-          const parsed = JSON.parse(storedUser);
-          setUser({
-            name: `${parsed.firstName} ${parsed.lastName}` || parsed.name || "User",
-            email: parsed.email || "",
-            userType: parsed.userType || "Job Seeker"
-          });
-        }
+      }
+
+      // Fallback to localStorage if API fails
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        const parsed = JSON.parse(storedUser);
+        setUser({
+          name: parsed.fullName || `${parsed.firstName || ''} ${parsed.lastName || ''}`.trim() || "User",
+          email: parsed.email || "",
+          userType: parsed.userType || "Job Seeker"
+        });
       }
     };
 

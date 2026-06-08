@@ -4,6 +4,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { JobProvider } from './context/JobContext';
+import { AuthProvider } from './context/AuthContext';
 
 // --- Import Pages and Layouts ---
 import LandingPage from './pages/LandingPage.jsx';
@@ -11,6 +12,8 @@ import SignIn from './pages/SignIn.jsx'; // Make sure this component exists
 import Login from './pages/Login.jsx';
 import OAuthSuccess from './pages/OAuthSuccess.jsx';
 import VerifyEmail from './pages/VerifyEmail.jsx';
+import ForgotPassword from './pages/ForgotPassword.jsx';
+import ResetPassword from './pages/ResetPassword.jsx';
 import DashboardLayout from './layouts/DashboardLayout.jsx';
 
 // --- Import the Guard Components ---
@@ -20,6 +23,7 @@ import RequireRole from './components/auth/RequireRole';
 const App = () => {
   return (
     <JobProvider>
+    <AuthProvider>
       <Router>
         <div className="min-h-screen bg-white font-sans">
           <Routes>
@@ -32,6 +36,8 @@ const App = () => {
             
             <Route path="/login/oauth-success" element={<OAuthSuccess />} />
             <Route path="/verify-email" element={<VerifyEmail />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             
             {/* --- Protected Routes (Role-Based) --- */}
             <Route
@@ -54,6 +60,7 @@ const App = () => {
           <ToastContainer position="bottom-right" />
         </div>
       </Router>
+    </AuthProvider>
     </JobProvider>
   );
 };

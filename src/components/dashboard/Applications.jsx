@@ -22,16 +22,13 @@ const Applications = () => {
       try {
         setLoading(true);
         const token = localStorage.getItem('token');
-        
-        if (!token) {
-          throw new Error('No authentication token found');
+        const headers = { 'Content-Type': 'application/json' };
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
         }
 
         const response = await fetch('/api/applications/my-applications', {
-          credentials: "include", headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+          credentials: "include", headers
         });
 
         if (!response.ok) {

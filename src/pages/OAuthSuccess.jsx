@@ -20,8 +20,17 @@ const OAuthSuccess = () => {
         return res.json();
       })
       .then(user => {
+        // Store access token from URL params if present
+        const accessToken = params.get('access_token');
+        if (accessToken) {
+          localStorage.setItem('token', accessToken);
+        }
+
         // Store user details for UI state
         localStorage.setItem('user', JSON.stringify(user));
+
+        // Clean URL params by removing the token from browser history
+        window.history.replaceState({}, document.title, window.location.pathname);
 
         // ✅ THE FIX: Compare against 'EMPLOYER' and 'JOBSEEKER' (no underscores)
         const userRole = (user.userType || '').trim().toUpperCase();
@@ -41,7 +50,7 @@ const OAuthSuccess = () => {
         navigate('/login', { replace: true });
       });
 
-  }, [navigate]);
+  }, [navigate, params]);
 
   return (
     <div className="flex items-center justify-center min-h-screen">

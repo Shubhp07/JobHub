@@ -14,14 +14,19 @@ import { getMyJobs } from "../../api/jobs";
 import ApplicantsModal from "./ApplicantsModal";
 import JobEditModal from "./JobEditModal";
 
-// Mock function for updating job status (replace with real API call later)
 const updateJobStatus = async (jobId, status) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log(`Mock: Updated job ${jobId} to status ${status}`);
-      resolve({ success: true });
-    }, 500);
+  const token = localStorage.getItem('token');
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  const response = await fetch(`http://localhost:8080/api/jobs/${jobId}/status?status=${status}`, {
+    method: 'PUT',
+    credentials: "include", headers,
   });
+  if (!response.ok) {
+    const err = await response.json();
+    throw new Error(err.message || 'Failed to update job status');
+  }
+  return response.json();
 };
 
 const PostedJobs = () => {

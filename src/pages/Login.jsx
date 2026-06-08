@@ -38,9 +38,7 @@ const Login = () => {
       const response = await axios.post(
         "http://localhost:8080/api/auth/login",
         formData,
-        {
-          credentials: "include", headers: { "Content-Type": "application/json" }, withCredentials: true,
-        }
+        { withCredentials: true, headers: { "Content-Type": "application/json" } }
       );
       console.log("Login response full:", response.data);
       console.log("Access Token:", response.data.accessToken);

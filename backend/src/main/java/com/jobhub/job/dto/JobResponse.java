@@ -2,6 +2,7 @@ package com.jobhub.job.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.jobhub.job.Job;
 
@@ -24,7 +25,8 @@ public class JobResponse {
     private Long employerId;
     private String employerName;
     private String jobLink;
-    private int applicationCount; 
+    private int applicationCount;
+    private List<String> skills;
 
     public int getApplicationCount() {
         return applicationCount;
@@ -96,4 +98,7 @@ public class JobResponse {
     public void setJobLink(String jobLink) {
         this.jobLink = jobLink;
     }
+
+    public List<String> getSkills() { return skills; }
+    public void setSkills(List<String> skills) { this.skills = skills; }
 }

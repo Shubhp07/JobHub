@@ -2,6 +2,8 @@ package com.jobhub.job;
 
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -93,6 +95,9 @@ public class JobService {
         job.setEmployer(employer);
         job.setStatus(Job.JobStatus.ACTIVE);
         job.setJobLink(request.getJobLink());
+        if (request.getSkills() != null && !request.getSkills().isEmpty()) {
+            job.setSkills(String.join(",", request.getSkills()));
+        }
 
         Job savedJob = jobRepository.save(job);
         return convertToResponse(savedJob);
@@ -190,6 +195,12 @@ public class JobService {
         response.setCreatedAt(job.getCreatedAt());
         response.setUpdatedAt(job.getUpdatedAt());
         response.setJobLink(job.getJobLink());
+
+        if (job.getSkills() != null && !job.getSkills().isEmpty()) {
+            response.setSkills(Arrays.asList(job.getSkills().split(",")));
+        } else {
+            response.setSkills(List.of());
+        }
 
         if (job.getEmployer() != null) {
             response.setEmployerId(job.getEmployer().getId());

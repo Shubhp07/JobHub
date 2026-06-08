@@ -60,11 +60,7 @@ const SignIn = () => {
     const response = await axios.post(
       "http://localhost:8080/api/auth/register",
       payload,
-      {
-        credentials: "include", headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      { withCredentials: true, headers: { "Content-Type": "application/json" } }
     );
 
     if (response.status === 200) {

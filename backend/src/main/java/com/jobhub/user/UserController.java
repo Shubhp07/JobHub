@@ -1,15 +1,10 @@
 package com.jobhub.user;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -95,34 +90,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Failed to upload resume: " + e.getMessage());
         }
-    }
-
-    @RestController
-    @RequestMapping("/api/resumes")
-    public class ResumeController {
-
-        // Adjust the dir to match your service
-        private final String RESUME_DIR = "D:/Project/Resume";
-
-        @GetMapping("/{filename:.+}")
-        public ResponseEntity<Resource> getResume(@PathVariable String filename) {
-            try {
-                Path filePath = Paths.get(RESUME_DIR).resolve(filename);
-                Resource resource = new UrlResource(filePath.toUri());
-                if (!resource.exists() || !resource.isReadable()) {
-                    return ResponseEntity.notFound().build();
-                }
-                // Force Content-Type to PDF for all resumes
-                String contentType = "application/pdf";
-                return ResponseEntity.ok()
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
-                        .header(HttpHeaders.CONTENT_TYPE, contentType)
-                        .body(resource);
-            } catch (Exception e) {
-                return ResponseEntity.notFound().build();
-            }
-        }
-
     }
 
     @GetMapping("/search")

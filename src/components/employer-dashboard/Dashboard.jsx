@@ -17,7 +17,7 @@ import {
   Filter,
 } from "lucide-react";
 
-import { getAllJobs, createJob } from "../../api/jobs";
+import { getMyJobs, createJob } from "../../api/jobs";
 
 const Dashboard = ({ activeTab }) => {
   const [jobs, setJobs] = useState([]);
@@ -37,7 +37,7 @@ const Dashboard = ({ activeTab }) => {
 
   const fetchJobsForPage = async (page) => {
     try {
-      const result = await getAllJobs(page, 5);
+      const result = await getMyJobs(page, 5);
       setJobs(result.content);
       setTotalPages(result.totalPages);
     } catch (error) {
@@ -57,7 +57,7 @@ const Dashboard = ({ activeTab }) => {
     },
     {
       title: "Total Applications",
-      value: jobs.reduce((sum, job) => sum + job.applications, 0),
+      value: jobs.reduce((sum, job) => sum + (job.applicationCount || 0), 0),
       change: "+18% from last month",
       changeType: "increase",
       icon: Users,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin } from 'lucide-react';
+import { Search, Globe, MessageCircle, Mail, Phone, MapPin } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -17,16 +17,16 @@ const Footer = () => {
             </p>
             <div className="flex space-x-4">
               <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
-                <Facebook className="h-6 w-6" />
+                <Globe className="h-6 w-6" />
               </a>
               <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
-                <Twitter className="h-6 w-6" />
+                <MessageCircle className="h-6 w-6" />
               </a>
               <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
-                <Linkedin className="h-6 w-6" />
+                <Globe className="h-6 w-6" />
               </a>
               <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
-                <Instagram className="h-6 w-6" />
+                <MessageCircle className="h-6 w-6" />
               </a>
             </div>
           </div>

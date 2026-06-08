@@ -234,7 +234,7 @@ const JobEditModal = ({ job, onClose, onUpdate }) => {
             <option value="ENTRY_LEVEL">Entry Level</option>
             <option value="MID_LEVEL">Mid Level</option>
             <option value="SENIOR_LEVEL">Senior Level</option>
-            <option value="EXECUTIVE_LEVEL">Executive Level</option>
+            <option value="EXECUTIVE">Executive Level</option>
           </select>
         </div>
 

@@ -2,6 +2,7 @@ package com.jobhub.job.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.jobhub.job.Job;
 
@@ -41,6 +42,8 @@ public class JobCreateRequest {
     private LocalDateTime applicationDeadline;
 
     private String jobLink;
+
+    private List<String> skills;
 
     // Constructors
     public JobCreateRequest() {}
@@ -86,4 +89,7 @@ public class JobCreateRequest {
     public void setJobLink(String jobLink) {
         this.jobLink = jobLink;
     }
+
+    public List<String> getSkills() { return skills; }
+    public void setSkills(List<String> skills) { this.skills = skills; }
 }

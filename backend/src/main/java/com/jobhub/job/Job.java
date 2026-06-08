@@ -45,6 +45,9 @@ public class Job {
     @Column(columnDefinition = "TEXT")
     private String requirements;
 
+    @Column(columnDefinition = "TEXT")
+    private String skills;
+
     @Size(max = 100)
     private String location;
 
@@ -147,6 +150,14 @@ public class Job {
 
     public void setRequirements(String requirements) {
         this.requirements = requirements;
+    }
+
+    public String getSkills() {
+        return skills;
+    }
+
+    public void setSkills(String skills) {
+        this.skills = skills;
     }
 
     public String getLocation() {

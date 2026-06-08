@@ -31,7 +31,7 @@ const JobCard = ({ job, onEdit, onDelete, onView }) => {
             </div>
             <div className="flex items-center gap-1">
               <Clock className="w-4 h-4" />
-              {job.posted}
+              {job.createdAt ? new Date(job.createdAt).toLocaleDateString() : ''}
             </div>
           </div>
         </div>
@@ -72,11 +72,7 @@ const JobCard = ({ job, onEdit, onDelete, onView }) => {
         <div className="flex items-center gap-4 text-sm text-gray-500">
           <div className="flex items-center gap-1">
             <Users className="w-4 h-4" />
-            {job.applications} applications
-          </div>
-          <div className="flex items-center gap-1">
-            <Eye className="w-4 h-4" />
-            {job.views} views
+            {job.applicationCount || 0} applications
           </div>
         </div>
       </div>

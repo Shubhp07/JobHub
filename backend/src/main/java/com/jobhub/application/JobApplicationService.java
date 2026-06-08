@@ -189,6 +189,7 @@ public class JobApplicationService {
         response.setSalaryMax(application.getJob().getSalaryMax()); // Add this
         response.setUserId(application.getUser().getId());
         response.setUserName(application.getUser().getFirstName() + " " + application.getUser().getLastName());
+        response.setUserEmail(application.getUser().getEmail());
         response.setStatus(application.getStatus());
         response.setCoverLetter(application.getCoverLetter());
 

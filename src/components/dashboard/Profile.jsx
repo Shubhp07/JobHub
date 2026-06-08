@@ -239,7 +239,8 @@ const Profile = () => {
       });
 
       if (!response.ok) throw new Error("Failed to upload resume");
-      const resumeUrl = await response.text(); // assuming backend returns plain text URL
+      const result = await response.json();
+      const resumeUrl = result.resumeUrl || result;
 
       setProfileData((prev) => ({ ...prev, resumeUrl }));
       setResumeFile(null);

@@ -124,10 +124,10 @@ const BasicInfoFields = ({ formData, setFormData, handleChange, errors }) => {
             }
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
           >
-            <option value="full-time">Full-time</option>
-            <option value="part-time">Part-time</option>
-            <option value="contract">Contract</option>
-            <option value="internship">Internship</option>
+            <option value="FULL_TIME">Full-time</option>
+            <option value="PART_TIME">Part-time</option>
+            <option value="CONTRACT">Contract</option>
+            <option value="INTERNSHIP">Internship</option>
           </select>
         </div>
 
@@ -146,10 +146,10 @@ const BasicInfoFields = ({ formData, setFormData, handleChange, errors }) => {
             }
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
           >
-            <option value="entry">Entry Level (0-2 years)</option>
-            <option value="mid">Mid Level (3-5 years)</option>
-            <option value="senior">Senior Level (6+ years)</option>
-            <option value="executive">Executive Level</option>
+            <option value="ENTRY_LEVEL">Entry Level (0-2 years)</option>
+            <option value="MID_LEVEL">Mid Level (3-5 years)</option>
+            <option value="SENIOR_LEVEL">Senior Level (6+ years)</option>
+            <option value="EXECUTIVE">Executive Level</option>
           </select>
         </div>
 

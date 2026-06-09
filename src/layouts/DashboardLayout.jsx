@@ -19,6 +19,7 @@ const DashboardLayout = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isJobFormOpen, setIsJobFormOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const isEmployer = location.pathname.includes("/dashboard/employer");
 
@@ -38,6 +39,8 @@ const DashboardLayout = () => {
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           onPostJob={handlePostJob}
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
         />
       );
     }
@@ -46,6 +49,8 @@ const DashboardLayout = () => {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onPostJob={handlePostJob}
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
       />
     );
   };
@@ -74,23 +79,21 @@ const DashboardLayout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <DashboardHeader />
-      <div className="flex min-h-screen pt-16">
-        {renderSidebar()}
-        <div className="flex flex-col flex-1">
-          <main className="flex-1 overflow-y-auto p-4">
-            {renderDashboard()}
-          </main>
-        </div>
-        {isEmployer && (
-          <JobForm
-            isOpen={isJobFormOpen}
-            onClose={() => setIsJobFormOpen(false)}
-            onSubmit={handleJobSubmit}
-          />
-        )}
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
+      {renderSidebar()}
+      <div className="flex flex-col flex-1 overflow-hidden">
+        <DashboardHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+        <main className="flex-1 overflow-y-auto p-4">
+          {renderDashboard()}
+        </main>
       </div>
+      {isEmployer && (
+        <JobForm
+          isOpen={isJobFormOpen}
+          onClose={() => setIsJobFormOpen(false)}
+          onSubmit={handleJobSubmit}
+        />
+      )}
     </div>
   );
 };

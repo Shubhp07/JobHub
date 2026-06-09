@@ -10,11 +10,12 @@ import {
   FileText,
   MessageSquare,
   Plus,
-  LogOut
+  LogOut,
+  Search
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom'; // ✅ 1. Import the useNavigate hook
 
-const Sidebar = ({ activeTab, setActiveTab, onPostJob }) => {
+const Sidebar = ({ activeTab, setActiveTab, onPostJob, sidebarOpen = true, setSidebarOpen }) => {
   const navigate = useNavigate(); // ✅ 2. Call the hook to get the navigate function
 
   const menuItems = [
@@ -51,7 +52,19 @@ const Sidebar = ({ activeTab, setActiveTab, onPostJob }) => {
   };
 
   return (
-    <aside className="bg-white border-r border-gray-200 w-64 h-screen sticky top-0 flex flex-col pt-12">
+    <aside className={`bg-white border-r border-gray-200 h-screen sticky top-0 flex flex-col pt-4 transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-20'}`}>
+      {/* Logo as Toggle */}
+      <div className={`hidden lg:flex items-center ${sidebarOpen ? 'px-4' : 'justify-center'} mb-6`}>
+        <button 
+          onClick={() => setSidebarOpen && setSidebarOpen(!sidebarOpen)}
+          className="flex items-center focus:outline-none hover:opacity-80 transition-opacity"
+          title="Toggle Sidebar"
+        >
+          <Search className="h-8 w-8 text-blue-600 shrink-0" />
+          {sidebarOpen && <span className="text-2xl font-bold text-gray-900 ml-2">JobHub</span>}
+        </button>
+      </div>
+
       <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
         {menuItems.map((item) => {
           const Icon = item.icon;
@@ -67,8 +80,8 @@ const Sidebar = ({ activeTab, setActiveTab, onPostJob }) => {
                   : 'text-gray-700 hover:bg-gray-50'
               }`}
             >
-              <Icon className={`w-5 h-5 ${isActive ? 'text-blue-700' : 'text-gray-400'}`} />
-              <span className="font-medium">{item.label}</span>
+              <Icon className={`w-5 h-5 ${isActive ? 'text-blue-700' : 'text-gray-400'} ${!sidebarOpen && "mx-auto"}`} />
+              {sidebarOpen && <span className="font-medium">{item.label}</span>}
             </button>
           );
         })}
@@ -80,8 +93,8 @@ const Sidebar = ({ activeTab, setActiveTab, onPostJob }) => {
           onClick={handleLogout}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors"
         >
-          <LogOut className="w-5 h-5 text-gray-400" />
-          <span className="font-medium">Logout</span>
+          <LogOut className={`w-5 h-5 text-gray-400 ${!sidebarOpen && "mx-auto"}`} />
+          {sidebarOpen && <span className="font-medium">Logout</span>}
         </button>
       </div>
     </aside>

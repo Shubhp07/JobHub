@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Bell, User, Menu, MessageSquare, Settings } from 'lucide-react';
+import { Search, User, Menu, Settings } from 'lucide-react';
 
 const DashboardHeader = ({ sidebarOpen, setSidebarOpen }) => {
   const [user, setUser] = useState({
@@ -74,7 +74,7 @@ const DashboardHeader = ({ sidebarOpen, setSidebarOpen }) => {
   };
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200 fixed top-0 h-16 left-0 right-0 z-50 w-full">
+    <header className="bg-white shadow-sm border-b border-gray-200 h-16 w-full shrink-0">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Left side */}
@@ -86,7 +86,7 @@ const DashboardHeader = ({ sidebarOpen, setSidebarOpen }) => {
               <Menu className="h-6 w-6" />
             </button>
             
-            <Link to="/" className="flex items-center ml-4 lg:ml-0">
+            <Link to="/" className="flex items-center ml-4 lg:hidden">
               <Search className="h-8 w-8 text-blue-600 mr-2" />
               <span className="text-2xl font-bold text-gray-900">JobHub</span>
             </Link>
@@ -106,19 +106,7 @@ const DashboardHeader = ({ sidebarOpen, setSidebarOpen }) => {
 
           {/* Right side */}
           <div className="flex items-center space-x-4">
-            <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg relative">
-              <MessageSquare className="h-6 w-6" />
-              <span className="absolute -top-1 -right-1 h-4 w-4 bg-blue-600 text-white text-xs rounded-full flex items-center justify-center">
-                3
-              </span>
-            </button>
-            
-            <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg relative">
-              <Bell className="h-6 w-6" />
-              <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                5
-              </span>
-            </button>
+
 
             {/* User Profile Section */}
             <div className="flex items-center space-x-3">

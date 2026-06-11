@@ -14,7 +14,6 @@ import com.jobhub.auth.dto.LoginRequest;
 import com.jobhub.auth.dto.LoginResponse;
 import com.jobhub.auth.dto.RegisterRequest;
 import com.jobhub.auth.dto.RegisterResponse;
-import com.jobhub.auth.AuthService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -94,6 +93,13 @@ public class AuthController {
     public ResponseEntity<String> forgotPassword(@RequestParam String email) {
         authService.forgotPassword(email);
         return ResponseEntity.ok("Password reset email sent");
+    }
+
+    @PostMapping("/resend-verification")
+    @Operation(summary = "Resend verification email")
+    public ResponseEntity<String> resendVerification(@RequestParam String email) {
+        authService.resendVerificationEmail(email);
+        return ResponseEntity.ok("Verification email resent if account exists and is not verified");
     }
 
     @PostMapping("/reset-password")

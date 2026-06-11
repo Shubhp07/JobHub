@@ -4,8 +4,17 @@ import {
   Briefcase,
   Users,
   Calendar,
+<<<<<<< HEAD
   MessageSquare,
   Settings,
+=======
+  BarChart3,
+  Settings,
+  Building,
+  FileText,
+  Plus,
+  LogOut,
+>>>>>>> c88db80 (Auth Service)
   User,
   BarChart3,
   Building,
@@ -19,7 +28,10 @@ const Sidebar = ({ isEmployer, activeTab, setActiveTab, onPostJob, sidebarOpen =
     { id: "jobs", label: "Jobs", icon: Briefcase },
     { id: "applications", label: "Applications", icon: Users, badge: "12", badgeColor: "bg-green-600" },
     { id: "interviews", label: "Interviews", icon: Calendar },
+<<<<<<< HEAD
     { id: "messages", label: "Messages", icon: MessageSquare, badge: "3", badgeColor: "bg-blue-600" },
+=======
+>>>>>>> c88db80 (Auth Service)
     { id: "settings", label: "Settings", icon: Settings },
     { id: "profile", label: "Profile", icon: User },
   ];

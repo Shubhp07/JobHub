@@ -1,7 +1,5 @@
 package com.jobhub.auth;
 
-import com.jobhub.common.EmailService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,11 +12,12 @@ import com.jobhub.auth.dto.LoginRequest;
 import com.jobhub.auth.dto.LoginResponse;
 import com.jobhub.auth.dto.RegisterRequest;
 import com.jobhub.auth.dto.RegisterResponse;
-import com.jobhub.user.User;
+import com.jobhub.common.EmailService;
 import com.jobhub.exception.BadRequestException;
 import com.jobhub.exception.ResourceNotFoundException;
-import com.jobhub.user.UserRepository;
 import com.jobhub.security.JwtTokenProvider;
+import com.jobhub.user.User;
+import com.jobhub.user.UserRepository;
 
 @Service
 @Transactional
@@ -150,6 +149,24 @@ public class AuthService {
 
         user.setEmailVerified(true);
         userRepository.save(user);
+    }
+
+    public void resendVerificationEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
+
+        if (user.getEmailVerified()) {
+            throw new BadRequestException("Email already verified");
+        }
+
+        try {
+            String verificationToken = tokenProvider.generateEmailVerificationToken(user.getEmail());
+            emailService.sendVerificationEmail(user.getEmail(), verificationToken);
+            System.out.println("Resent verification email to " + user.getEmail());
+        } catch (Exception e) {
+            System.err.println("Failed to resend verification email: " + e.getMessage());
+            throw new BadRequestException("Failed to send verification email");
+        }
     }
 
     public void forgotPassword(String email) {

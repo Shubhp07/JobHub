@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { 
   User, 
-  Bell, 
   Shield, 
   Eye, 
   Mail,
@@ -35,7 +34,7 @@ const Settings = () => {
 
   const tabs = [
     { id: 'profile', label: 'Profile Settings', icon: User },
-    { id: 'notifications', label: 'Notifications', icon: Bell },
+    { id: 'notifications', label: 'Notifications' },
     { id: 'privacy', label: 'Privacy', icon: Shield },
     { id: 'account', label: 'Account', icon: Eye }
   ];
@@ -311,7 +310,11 @@ const Settings = () => {
                         : 'text-gray-700 hover:bg-gray-50'
                     }`}
                   >
-                    <IconComponent className="h-5 w-5 mr-3" />
+                    {IconComponent ? (
+                      <IconComponent className="h-5 w-5 mr-3" />
+                    ) : (
+                      <span className="h-5 w-5 mr-3" />
+                    )}
                     {tab.label}
                   </button>
                 );

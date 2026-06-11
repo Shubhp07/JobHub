@@ -6,7 +6,6 @@ import {
   XCircle, 
   Calendar,
   Eye,
-  MessageSquare,
   Loader
 } from 'lucide-react';
 
@@ -298,10 +297,7 @@ const Applications = () => {
                   <Eye className="h-4 w-4 mr-1" />
                   View Job
                 </button>
-                <button className="flex items-center px-3 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors">
-                  <MessageSquare className="h-4 w-4 mr-1" />
-                  Messages
-                </button>
+                {/* Messages button removed */}
               </div>
               <div className="flex space-x-2">
                 {application.status === 'offer' && (

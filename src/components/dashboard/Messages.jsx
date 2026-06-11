@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { 
-  MessageSquare, 
   Search, 
   Send, 
   Paperclip, 
@@ -269,10 +268,9 @@ const Messages = () => {
             ) : (
               <div className="flex-1 flex items-center justify-center">
                 <div className="text-center">
-                  <MessageSquare className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No conversation selected</h3>
-                  <p className="text-gray-600">Choose a conversation from the list to start messaging</p>
-                </div>
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">No conversation selected</h3>
+                      <p className="text-gray-600">Choose a conversation from the list to start messaging</p>
+                    </div>
               </div>
             )}
           </div>

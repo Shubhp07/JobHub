@@ -5,7 +5,7 @@ import ApplicationCard from "./ApplicationCard";
 import RecentActivity from "./RecentActivity";
 import JobForm from "./JobForm";
 // CORRECT: This is a default import
-import PostedJobs from "../employer-dashboard/PostedJobs"; 
+import PostedJobs from "./PostedJobs"; 
 
 
 import {

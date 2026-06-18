@@ -1,34 +1,9 @@
 import React from 'react';
-import { 
-  LayoutDashboard, 
-  Briefcase, 
-  Users, 
-  Calendar, 
-  BarChart3, 
-  Settings,
-  Building,
-  FileText,
-  MessageSquare,
-  Plus,
-  LogOut,
-  Search
-} from 'lucide-react';
-import { useNavigate } from 'react-router-dom'; // ✅ 1. Import the useNavigate hook
+import { Search, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-const Sidebar = ({ activeTab, setActiveTab, onPostJob, sidebarOpen = true, setSidebarOpen }) => {
-  const navigate = useNavigate(); // ✅ 2. Call the hook to get the navigate function
-
-  const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'jobs', label: 'Jobs', icon: Briefcase, path: '/dashboard/my-jobs' },
-    { id: 'applications', label: 'Applications', icon: Users },
-    { id: 'interviews', label: 'Interviews', icon: Calendar },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-    { id: 'messages', label: 'Messages', icon: MessageSquare },
-    { id: 'company', label: 'Company Profile', icon: Building },
-    { id: 'reports', label: 'Reports', icon: FileText },
-    { id: 'settings', label: 'Settings', icon: Settings },
-  ];
+const Sidebar = ({ menuItems, activeTab, setActiveTab, sidebarOpen = true, setSidebarOpen, onLogoutNavigate = '/login' }) => {
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
     console.log("Logout clicked");
@@ -45,10 +20,7 @@ const Sidebar = ({ activeTab, setActiveTab, onPostJob, sidebarOpen = true, setSi
     localStorage.removeItem("user");
     localStorage.removeItem("refreshToken");
     
-    // ✅ 3. Use the navigate function to redirect the user
-    // The 'replace: true' option prevents the user from using the browser's
-    // back button to return to the protected dashboard page.
-    navigate('/login', { replace: true });
+    navigate(onLogoutNavigate, { replace: true });
   };
 
   return (
@@ -65,6 +37,7 @@ const Sidebar = ({ activeTab, setActiveTab, onPostJob, sidebarOpen = true, setSi
         </button>
       </div>
 
+      {/* Navigation */}
       <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
         {menuItems.map((item) => {
           const Icon = item.icon;
@@ -81,7 +54,16 @@ const Sidebar = ({ activeTab, setActiveTab, onPostJob, sidebarOpen = true, setSi
               }`}
             >
               <Icon className={`w-5 h-5 ${isActive ? 'text-blue-700' : 'text-gray-400'} ${!sidebarOpen && "mx-auto"}`} />
-              {sidebarOpen && <span className="font-medium">{item.label}</span>}
+              {sidebarOpen && (
+                <>
+                  <span className="font-medium">{item.label}</span>
+                  {item.badge && (
+                    <span className={`ml-auto text-white text-xs px-2 py-1 rounded-full ${item.badgeColor || 'bg-blue-600'}`}>
+                      {item.badge}
+                    </span>
+                  )}
+                </>
+              )}
             </button>
           );
         })}

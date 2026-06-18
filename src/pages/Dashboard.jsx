@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import DashboardHeader from '../components/dashboard/DashboardHeader';
+import DashboardHeader from '../components/shared/DashboardHeader';
 import Sidebar from '../components/dashboard/Sidebar';
 import DashboardOverview from '../components/dashboard/DashboardOverview';
 import JobSearch from '../components/dashboard/JobSearch';

@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
-import DashboardHeader from "../components/dashboard/DashboardHeader";
-import EmployerDashboard from "../components/employer-dashboard/Dashboard";
+import DashboardHeader from "../components/shared/DashboardHeader";
+import EmployerDashboard from "../components/dashboard/EmployerDashboard";
 import JobSeekerDashboard from "../components/dashboard/DashboardOverview";
-import EmployerSidebar from "../components/employer-dashboard/Sidebar";
-import JobSeekerSidebar from "../components/dashboard/Sidebar";
-import JobForm from "../components/employer-dashboard/JobForm";
+import Sidebar from "../components/dashboard/Sidebar";
+import JobForm from "../components/dashboard/JobForm";
 
 import Profile from '../components/dashboard/Profile';
 import Applications from '../components/dashboard/Applications';
@@ -30,29 +29,6 @@ const DashboardLayout = () => {
     console.log("New job submitted:", jobData);
     setIsJobFormOpen(false);
     ; // save job to global state
-  };
-
-  const renderSidebar = () => {
-    if (isEmployer) {
-      return (
-        <EmployerSidebar
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          onPostJob={handlePostJob}
-          sidebarOpen={sidebarOpen}
-          setSidebarOpen={setSidebarOpen}
-        />
-      );
-    }
-    return (
-      <JobSeekerSidebar
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        onPostJob={handlePostJob}
-        sidebarOpen={sidebarOpen}
-        setSidebarOpen={setSidebarOpen}
-      />
-    );
   };
 
   const renderDashboard = () => {
@@ -80,7 +56,14 @@ const DashboardLayout = () => {
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
-      {renderSidebar()}
+      <Sidebar
+        isEmployer={isEmployer}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        onPostJob={handlePostJob}
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+      />
       <div className="flex flex-col flex-1 overflow-hidden">
         <DashboardHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
         <main className="flex-1 overflow-y-auto p-4">

@@ -50,7 +50,7 @@ public class AuthService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setUserType(request.getUserType());
-        user.setEmailVerified(false);
+        user.setEmailVerified(true); // Temporarily true since email validation is not fully set up
         user.setIsActive(true);
         user.setEnabled(true);
 
@@ -82,9 +82,10 @@ public class AuthService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        if (!user.getEmailVerified()) {
-            throw new BadRequestException("Please verify your email before logging in");
-        }
+        // Temporarily bypassing email verification check
+        // if (!user.getEmailVerified()) {
+        //     throw new BadRequestException("Please verify your email before logging in");
+        // }
 
         String token = tokenProvider.generateToken(authentication);
         String refreshToken = tokenProvider.generateRefreshToken(authentication);

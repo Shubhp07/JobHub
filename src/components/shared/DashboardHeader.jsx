@@ -74,56 +74,60 @@ const DashboardHeader = ({ sidebarOpen, setSidebarOpen }) => {
   };
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200 h-16 w-full shrink-0">
-      <div className="px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+    <header className="bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200 h-20 w-full shrink-0 sticky top-0 z-10 transition-all duration-300">
+      <div className="px-4 sm:px-6 lg:px-8 h-full">
+        <div className="flex justify-between items-center h-full">
           {/* Left side */}
           <div className="flex items-center">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+              className="lg:hidden p-2.5 rounded-xl text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/50"
             >
               <Menu className="h-6 w-6" />
             </button>
             
-            <Link to="/" className="flex items-center ml-4 lg:hidden">
-              <Search className="h-8 w-8 text-blue-600 mr-2" />
-              <span className="text-2xl font-bold text-gray-900">JobHub</span>
+            <Link to="/" className="flex items-center ml-4 lg:hidden group">
+              <div className="bg-gradient-to-tr from-blue-600 to-purple-600 p-1.5 rounded-lg mr-2 group-hover:shadow-md transition-all">
+                <Search className="h-5 w-5 text-white" />
+              </div>
+              <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700">JobHub</span>
             </Link>
           </div>
 
-          {/* Search bar */}
-          <div className="hidden md:flex flex-1 max-w-lg mx-8">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-              <input
-                type="text"
-                placeholder="Search jobs, companies..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-              />
-            </div>
-          </div>
-
           {/* Right side */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-6 ml-auto">
+            {/* Notification Bell */}
+            <button className="relative p-2 text-gray-500 hover:text-blue-600 transition-colors rounded-full hover:bg-blue-50 focus:outline-none">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+              <span className="absolute top-1.5 right-1.5 block h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white"></span>
+            </button>
 
+            <div className="h-8 w-px bg-gray-200 hidden sm:block"></div>
 
             {/* User Profile Section */}
-            <div className="flex items-center space-x-3">
-              <img
-                src={getProfilePictureUrl()}
-                alt={`${user.name}'s profile`}
-                className="h-8 w-8 rounded-full object-cover border-2 border-gray-200"
-                onError={(e) => {
-                  console.log('Image failed to load, using fallback');
-                  e.target.src = "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.name) + "&background=ef4444&color=fff&size=100";
-                }}
-              />
-              <div className="hidden md:block">
-                <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                <p className="text-xs text-gray-500">{user.email}</p>
+            <button className="flex items-center space-x-3 p-1.5 rounded-xl hover:bg-gray-50 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/50">
+              <div className="relative">
+                <img
+                  src={getProfilePictureUrl()}
+                  alt={`${user.name}'s profile`}
+                  className="h-10 w-10 rounded-full object-cover border-2 border-white shadow-sm"
+                  onError={(e) => {
+                    console.log('Image failed to load, using fallback');
+                    e.target.src = "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.name) + "&background=ef4444&color=fff&size=100";
+                  }}
+                />
+                <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 ring-2 ring-white"></div>
               </div>
-            </div>
+              <div className="hidden md:block text-left">
+                <p className="text-sm font-semibold text-gray-900 leading-tight">{user.name}</p>
+                <p className="text-xs text-gray-500 font-medium">{user.userType}</p>
+              </div>
+              <svg className="w-5 h-5 text-gray-400 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
           </div>
         </div>
       </div>

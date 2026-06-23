@@ -38,3 +38,38 @@ export const getApplicantsForJob = async (jobId) => {
   const data = await response.json();
   return data.content;
 };
+
+export const getMyApplications = async (status = '') => {
+  const url = status 
+    ? `http://localhost:8080/api/applications/my-applications?status=${status}` 
+    : `http://localhost:8080/api/applications/my-applications`;
+  
+  const response = await fetch(url, {
+    credentials: "include",
+    headers: getAuthHeaders()
+  });
+  if (!response.ok) throw new Error('Failed to fetch applications');
+  return await response.json();
+};
+
+export const getEmployerApplications = async (status = '') => {
+  const url = status 
+    ? `http://localhost:8080/api/applications/employer/all?status=${status}` 
+    : `http://localhost:8080/api/applications/employer/all`;
+  
+  const response = await fetch(url, {
+    credentials: "include",
+    headers: getAuthHeaders()
+  });
+  if (!response.ok) throw new Error('Failed to fetch employer applications');
+  return await response.json();
+};
+
+export const getSavedJobs = async () => {
+  const response = await fetch(`http://localhost:8080/api/saved-jobs`, {
+    credentials: "include",
+    headers: getAuthHeaders()
+  });
+  if (!response.ok) throw new Error('Failed to fetch saved jobs');
+  return await response.json();
+};

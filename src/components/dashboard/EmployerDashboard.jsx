@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import StatsCard from "./StatsCard";
 import JobCard from "./JobCard";
 import ApplicationCard from "./ApplicationCard";
+import PageHeader from "../shared/PageHeader";
 import RecentActivity from "./RecentActivity";
 import JobForm from "./JobForm";
 // CORRECT: This is a default import
@@ -18,12 +19,21 @@ import {
 } from "lucide-react";
 
 import { getMyJobs, createJob } from "../../api/jobs";
+import { getEmployerApplications } from "../../api/applications";
 
 const Dashboard = ({ activeTab }) => {
   const [jobs, setJobs] = useState([]);
+  const [applications, setApplications] = useState([]);
+  const [activities, setActivities] = useState([]);
   const [isJobFormOpen, setIsJobFormOpen] = useState(false);
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
+  const [statsData, setStatsData] = useState({
+    activeJobs: 0,
+    totalApplications: 0,
+    interviewsScheduled: 0,
+    hireRate: "0%"
+  });
 
   useEffect(() => {
     fetchJobsForPage(currentPage);
@@ -32,6 +42,7 @@ const Dashboard = ({ activeTab }) => {
   useEffect(() => {
     if (activeTab === "dashboard") {
       fetchJobsForPage(currentPage);
+      fetchEmployerStats();
     }
   }, [currentPage, activeTab]);
 
@@ -45,108 +56,102 @@ const Dashboard = ({ activeTab }) => {
     }
   };
 
-  // Mock data
+  const fetchEmployerStats = async () => {
+    try {
+      // For total jobs, we'll fetch a large page just to get total active
+      // Since getMyJobs is paginated, we can use totalElements
+      const jobsRes = await getMyJobs(0, 100);
+      const activeJobsCount = jobsRes.content?.filter(j => (j.status || "").toUpperCase() === "ACTIVE").length || 0;
+
+      // Fetch all applications for stats
+      const appsRes = await getEmployerApplications();
+      const totalAppsCount = appsRes.totalElements || appsRes.content?.length || 0;
+      const appsList = appsRes.content || (Array.isArray(appsRes) ? appsRes : []);
+
+      const formattedApps = appsList.slice(0, 5).map((app, index) => ({
+        id: app.id || app.applicationId || app.userId || String(index),
+        candidateName: app.userName || app.candidateName || app.applicantName || app.user?.name || "Unknown Candidate",
+        candidateEmail: app.userEmail || app.candidateEmail || app.applicantEmail || app.user?.email || "",
+        position: app.jobTitle || app.job?.title || "Unknown Position",
+        appliedDate: app.appliedAt || app.createdAt ? new Date(app.appliedAt || app.createdAt).toLocaleDateString() : "Recently",
+        rating: app.rating || 0,
+        status: app.status?.toLowerCase() || "new",
+        location: app.location || app.job?.location || "Remote",
+        experience: app.experience || "Not specified",
+        avatar: app.avatar || null
+      }));
+      setApplications(formattedApps);
+
+      const dynamicActivities = appsList.slice(0, 4).map((app, index) => {
+        const candidateName = app.userName || app.candidateName || app.applicantName || app.user?.name || "A candidate";
+        const position = app.jobTitle || app.job?.title || "a position";
+        return {
+          id: String(app.id || index),
+          type: "application",
+          title: "New application received",
+          description: `${candidateName} applied for ${position}`,
+          time: app.appliedAt || app.createdAt ? new Date(app.appliedAt || app.createdAt).toLocaleDateString() : "Recently",
+        };
+      });
+      setActivities(dynamicActivities);
+
+      // Fetch interviews scheduled
+      const interviewsRes = await getEmployerApplications("INTERVIEW");
+      const interviewsCount = interviewsRes.totalElements || interviewsRes.content?.length || 0;
+
+      // Calculate approximate hire rate based on "OFFER" status, or mock it if no offers yet
+      const offersRes = await getEmployerApplications("OFFER");
+      const offersCount = offersRes.totalElements || offersRes.content?.length || 0;
+      const calculatedRate = totalAppsCount > 0 ? Math.round((offersCount / totalAppsCount) * 100) : 0;
+
+      setStatsData({
+        activeJobs: activeJobsCount,
+        totalApplications: totalAppsCount,
+        interviewsScheduled: interviewsCount,
+        hireRate: `${calculatedRate}%`
+      });
+
+    } catch (err) {
+      console.error("Failed to fetch employer stats", err);
+    }
+  };
+
+  // Stats Data
   const stats = [
     {
       title: "Active Jobs",
-      value: jobs.filter((job) => job.status === "active").length,
-      change: "+2 this week",
+      value: statsData.activeJobs,
+      change: "",
       changeType: "increase",
       icon: Briefcase,
       color: "blue",
     },
     {
       title: "Total Applications",
-      value: jobs.reduce((sum, job) => sum + (job.applicationCount || 0), 0),
-      change: "+18% from last month",
+      value: statsData.totalApplications,
+      change: "",
       changeType: "increase",
       icon: Users,
       color: "emerald",
     },
     {
       title: "Interviews Scheduled",
-      value: 32,
-      change: "+5 this week",
+      value: statsData.interviewsScheduled,
+      change: "",
       changeType: "increase",
       icon: Calendar,
       color: "orange",
     },
     {
       title: "Hire Rate",
-      value: "68%",
-      change: "+4% from last month",
+      value: statsData.hireRate,
+      change: "",
       changeType: "increase",
       icon: TrendingUp,
       color: "purple",
     },
   ];
 
-  const applications = [
-    {
-      id: "1",
-      candidateName: "Sarah Johnson",
-      candidateEmail: "sarah.johnson@email.com",
-      position: "Senior Frontend Developer",
-      appliedDate: "2 days ago",
-      rating: 4,
-      status: "new",
-      location: "San Francisco, CA",
-      experience: "5+ years",
-    },
-    {
-      id: "2",
-      candidateName: "Michael Chen",
-      candidateEmail: "michael.chen@email.com",
-      position: "Product Manager",
-      appliedDate: "1 day ago",
-      rating: 5,
-      status: "reviewing",
-      location: "New York, NY",
-      experience: "7+ years",
-    },
-    {
-      id: "3",
-      candidateName: "Emily Rodriguez",
-      candidateEmail: "emily.rodriguez@email.com",
-      position: "UX Designer",
-      appliedDate: "3 days ago",
-      rating: 4,
-      status: "interviewed",
-      location: "Austin, TX",
-      experience: "4+ years",
-    },
-  ];
-
-  const recentActivities = [
-    {
-      id: "1",
-      type: "application",
-      title: "New application received",
-      description: "Sarah Johnson applied for Senior Frontend Developer",
-      time: "2 hours ago",
-    },
-    {
-      id: "2",
-      type: "interview",
-      title: "Interview scheduled",
-      description: "Michael Chen - Product Manager position",
-      time: "4 hours ago",
-    },
-    {
-      id: "3",
-      type: "view",
-      title: "Job viewed",
-      description: "UX Designer position viewed 15 times",
-      time: "6 hours ago",
-    },
-    {
-      id: "4",
-      type: "message",
-      title: "Message sent",
-      description: "Follow-up sent to Emily Rodriguez",
-      time: "1 day ago",
-    },
-  ];
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -184,22 +189,15 @@ const Dashboard = ({ activeTab }) => {
       <>
         <div className="p-6 space-y-6">
           {/* Header with Post Job Button */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                Dashboard Overview
-              </h1>
-              <p className="text-gray-600 mt-1">
-                Manage your job postings and track applications
-              </p>
-            </div>
-            <button
-              onClick={() => setIsJobFormOpen(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition-colors font-medium shadow-lg hover:shadow-xl"
-            >
-              <Plus className="w-5 h-5" />
-              Post New Job
-            </button>
+          <div className="-mx-6 -mt-6 mb-6">
+            <PageHeader 
+              title="Dashboard Overview"
+              subtitle="Manage your job postings and track applications"
+              buttonText="Post New Job"
+              onButtonClick={() => setIsJobFormOpen(true)}
+              showSearch={false}
+              showViewToggle={false}
+            />
           </div>
 
           {/* Stats Grid */}
@@ -236,7 +234,7 @@ const Dashboard = ({ activeTab }) => {
 
             {/* Activity Column */}
             <div>
-              <RecentActivity activities={recentActivities} />
+              <RecentActivity activities={activities} />
             </div>
           </div>
 

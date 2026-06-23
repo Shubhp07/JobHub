@@ -10,8 +10,18 @@ import {
   DollarSign,
   Star,
   ArrowRight,
-  User
+  User,
+  Briefcase,
+  Building,
+  ChevronRight,
+  BookmarkPlus,
+  Send,
+  CheckCircle,
+  Search,
+  Edit2
 } from 'lucide-react';
+import PageHeader from "../shared/PageHeader";
+import { getMyApplications, getSavedJobs } from '../../api/applications';
 
 const DashboardOverview = () => {
   const [user, setUser] = useState({
@@ -20,11 +30,18 @@ const DashboardOverview = () => {
     userType: ""
   });
 
+  const [statsData, setStatsData] = useState({
+    applicationsSent: 0,
+    profileViews: 0, // Profile views might be mocked for now if there is no backend support
+    savedJobs: 0,
+    interviews: 0
+  });
+
   const stats = [
-    { label: 'Applications Sent', value: '24', change: '+12%', icon: FileText, color: 'bg-blue-500' },
-    { label: 'Profile Views', value: '156', change: '+8%', icon: Eye, color: 'bg-green-500' },
-    { label: 'Saved Jobs', value: '18', change: '+3', icon: Bookmark, color: 'bg-purple-500' },
-    { label: 'Interviews', value: '5', change: '+2', icon: Calendar, color: 'bg-orange-500' },
+    { label: 'Applications Sent', value: statsData.applicationsSent, change: '', icon: FileText, color: 'bg-blue-500' },
+    { label: 'Profile Views', value: statsData.profileViews, change: '', icon: Eye, color: 'bg-green-500' },
+    { label: 'Saved Jobs', value: statsData.savedJobs, change: '', icon: Bookmark, color: 'bg-purple-500' },
+    { label: 'Interviews', value: statsData.interviews, change: '', icon: Calendar, color: 'bg-orange-500' },
   ];
 
   useEffect(() => {
@@ -65,7 +82,34 @@ const DashboardOverview = () => {
       }
     };
 
+    const fetchDashboardStats = async () => {
+      try {
+        // Fetch total applications
+        const appsRes = await getMyApplications();
+        const totalApps = appsRes.totalElements || appsRes.content?.length || 0;
+
+        // Fetch interviews
+        const interviewsRes = await getMyApplications('INTERVIEW');
+        const totalInterviews = interviewsRes.totalElements || interviewsRes.content?.length || 0;
+
+        // Fetch saved jobs
+        const savedRes = await getSavedJobs();
+        const totalSaved = savedRes.totalElements || savedRes.content?.length || 0;
+
+        setStatsData({
+          applicationsSent: totalApps,
+          profileViews: Math.floor(Math.random() * 50) + 10, // Mocked profile views
+          savedJobs: totalSaved,
+          interviews: totalInterviews
+        });
+
+      } catch (err) {
+        console.error("Failed to load dashboard stats", err);
+      }
+    };
+
     fetchUserProfile();
+    fetchDashboardStats();
   }, []);
 
   const recentApplications = [
@@ -123,18 +167,15 @@ const DashboardOverview = () => {
 
   return (
     <div className="space-y-8 pt-6 px-6 pb-6">
-      {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white shadow-lg">
-        <h1 className="text-3xl font-bold mb-2">Welcome back, {user.name}! 👋</h1>
-        <p className="text-blue-100 mb-6">Here's what's happening with your job search today.</p>
-        <div className="flex flex-wrap gap-4">
-          <button className="bg-white text-blue-700 border border-blue-100 hover:bg-blue-50 px-6 py-2 rounded-lg font-medium transition-colors shadow">
-            Update Profile
-          </button>
-          <button className="bg-blue-100 text-blue-700 hover:bg-blue-200 px-6 py-2 rounded-lg font-medium transition-colors shadow">
-            Search Jobs
-          </button>
-        </div>
+      <div className="-mx-6 -mt-6 mb-6">
+        <PageHeader 
+          title={`Welcome back, ${user.name}! 👋`}
+          subtitle="Here's what's happening with your job search today."
+          buttonText="Search Jobs"
+          onButtonClick={() => {}}
+          showSearch={false}
+          showViewToggle={false}
+        />
       </div>
 
       {/* Stats Grid */}

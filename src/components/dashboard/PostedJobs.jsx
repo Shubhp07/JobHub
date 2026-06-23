@@ -9,22 +9,30 @@ import {
   PowerOff,
   MapPin,
   DollarSign,
+  LayoutGrid,
+  List,
 } from "lucide-react";
 import { getMyJobs } from "../../api/jobs";
 import ApplicantsModal from "./ApplicantsModal";
 import JobEditModal from "./JobEditModal";
+import PageHeader from "../shared/PageHeader";
+import { HoverEffect } from "../ui/card-hover-effect";
 
 const updateJobStatus = async (jobId, status) => {
-  const token = localStorage.getItem('token');
-  const headers = { 'Content-Type': 'application/json' };
-  if (token) headers['Authorization'] = `Bearer ${token}`;
-  const response = await fetch(`http://localhost:8080/api/jobs/${jobId}/status?status=${status}`, {
-    method: 'PUT',
-    credentials: "include", headers,
-  });
+  const token = localStorage.getItem("token");
+  const headers = { "Content-Type": "application/json" };
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const response = await fetch(
+    `http://localhost:8080/api/jobs/${jobId}/status?status=${status}`,
+    {
+      method: "PUT",
+      credentials: "include",
+      headers,
+    },
+  );
   if (!response.ok) {
     const err = await response.json();
-    throw new Error(err.message || 'Failed to update job status');
+    throw new Error(err.message || "Failed to update job status");
   }
   return response.json();
 };
@@ -37,6 +45,7 @@ const PostedJobs = () => {
   const [viewingApplicantsFor, setViewingApplicantsFor] = useState(null);
   const [editingJob, setEditingJob] = useState(null);
   const [updatingStatus, setUpdatingStatus] = useState(null);
+  const [viewMode, setViewMode] = useState("list");
 
   useEffect(() => {
     loadPostedJobs();
@@ -59,7 +68,7 @@ const PostedJobs = () => {
     (job) =>
       job &&
       typeof job.title === "string" &&
-      job.title.toLowerCase().includes(searchTerm.toLowerCase())
+      job.title.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Get status color and handle INACTIVE status
@@ -87,22 +96,26 @@ const PostedJobs = () => {
     const currentStatus = (job.status || "ACTIVE").toUpperCase();
     const newStatus = currentStatus === "ACTIVE" ? "INACTIVE" : "ACTIVE";
     const actionText = newStatus.toLowerCase();
-    
-    if (!window.confirm(`Are you sure you want to set "${job.title}" as ${actionText}?`)) {
+
+    if (
+      !window.confirm(
+        `Are you sure you want to set "${job.title}" as ${actionText}?`,
+      )
+    ) {
       return;
     }
 
     try {
       setUpdatingStatus(job.id);
-      
+
       // Call API to update job status (replace with real API call)
       await updateJobStatus(job.id, newStatus);
-      
+
       // Update local state
       setJobs((prevJobs) =>
         prevJobs.map((j) =>
-          j.id === job.id ? { ...j, status: newStatus } : j
-        )
+          j.id === job.id ? { ...j, status: newStatus } : j,
+        ),
       );
 
       alert(`Job "${job.title}" has been set to ${actionText}.`);
@@ -126,43 +139,32 @@ const PostedJobs = () => {
   return (
     <>
       <div className="min-h-screen bg-gray-50/50 flex-1">
-        {/* Header */}
-        <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">
-                  My Job Postings
-                </h1>
-                <p className="text-gray-600 mt-1">
-                  Manage, edit, and view applicants for your jobs.
-                </p>
-              </div>
-              <div className="relative flex-1 lg:max-w-md">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search your jobs..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Header Section */}
+        <PageHeader 
+          title="My Job Postings"
+          subtitle="Manage, edit, and view applicants for your jobs."
+          buttonText="Post New Job"
+          onButtonClick={() => { /* Handle post new job navigation */ }}
+          showSearch={true}
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          searchPlaceholder="Search your jobs..."
+          showViewToggle={true}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+        />
 
         {/* Job List */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="space-y-6">
-            {filteredJobs.length > 0 ? (
-              filteredJobs.map((job) => {
-                const isInactive = (job.status || "").toUpperCase() === "INACTIVE";
-                
+        <div className="px-6 py-8">
+          {filteredJobs.length > 0 ? (
+            <HoverEffect items={filteredJobs} className="grid-cols-1 md:grid-cols-1 lg:grid-cols-1">
+              {(job) => {
+                const isInactive =
+                  (job.status || "").toUpperCase() === "INACTIVE";
+
                 return (
                   <div
-                    key={job.id}
-                    className={`bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-all duration-300 ${
+                    className={`bg-white rounded-2xl border border-gray-200 p-6 h-full ${
                       isInactive ? "opacity-75" : ""
                     }`}
                   >
@@ -174,7 +176,7 @@ const PostedJobs = () => {
                         <div className="mb-2">
                           <span
                             className={`inline-block px-3 py-1 rounded-full text-xs font-medium ring-1 ${getStatusChipClass(
-                              job.status
+                              job.status,
                             )}`}
                           >
                             {job.status || "ACTIVE"}
@@ -190,7 +192,9 @@ const PostedJobs = () => {
                       )}
                     </div>
 
-                    <div className="mb-3 text-gray-700">{job.company || ""}</div>
+                    <div className="mb-3 text-gray-700">
+                      {job.company || ""}
+                    </div>
                     <div className="mb-1 text-gray-600">
                       <MapPin className="inline w-4 h-4 mr-1" />
                       {job.location || ""}
@@ -204,26 +208,29 @@ const PostedJobs = () => {
                       <div className="flex items-center gap-2 text-sm text-blue-600">
                         <Users className="w-5 h-5" />
                         <span className="font-medium text-gray-700">
-                          {job.applicationCount != null ? job.applicationCount : 0} Applicants
+                          {job.applicationCount != null
+                            ? job.applicationCount
+                            : 0}{" "}
+                          Applicants
                         </span>
                       </div>
                       <div className="flex items-center gap-3">
                         <button
                           onClick={() => handleViewApplicants(job)}
-                          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors z-30 relative"
                         >
                           <Eye className="w-4 h-4" /> View Applicants
                         </button>
                         <button
                           onClick={() => handleEditJob(job.id)}
-                          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-green-600 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
+                          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-green-600 bg-green-50 rounded-lg hover:bg-green-100 transition-colors z-30 relative"
                         >
                           <Edit className="w-4 h-4" /> Edit
                         </button>
                         <button
                           onClick={() => handleToggleJobStatus(job)}
                           disabled={updatingStatus === job.id}
-                          className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                          className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors z-30 relative ${
                             (job.status || "ACTIVE").toUpperCase() === "ACTIVE"
                               ? "text-orange-600 bg-orange-50 hover:bg-orange-100"
                               : "text-green-600 bg-green-50 hover:bg-green-100"
@@ -234,7 +241,8 @@ const PostedJobs = () => {
                               <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                               Updating...
                             </>
-                          ) : (job.status || "ACTIVE").toUpperCase() === "ACTIVE" ? (
+                          ) : (job.status || "ACTIVE").toUpperCase() ===
+                            "ACTIVE" ? (
                             <>
                               <PowerOff className="w-4 h-4" /> Set Inactive
                             </>
@@ -248,16 +256,18 @@ const PostedJobs = () => {
                     </div>
                   </div>
                 );
-              })
-            ) : (
-              <div className="text-center py-12">
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  No jobs posted yet
-                </h3>
-                <p className="text-gray-600">Click "Post New Job" to get started.</p>
-              </div>
-            )}
-          </div>
+              }}
+            </HoverEffect>
+          ) : (
+            <div className="text-center py-12">
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                No jobs posted yet
+              </h3>
+              <p className="text-gray-600">
+                Click "Post New Job" to get started.
+              </p>
+            </div>
+          )}
         </div>
       </div>
 

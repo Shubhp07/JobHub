@@ -1,5 +1,6 @@
 import React from 'react';
 import { Search, LayoutGrid, List } from 'lucide-react';
+import { TextGenerateEffect } from '../ui/text-generate-effect';
 
 const PageHeader = ({
   title,
@@ -20,9 +21,10 @@ const PageHeader = ({
         {/* Top Row: Title and Button */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
           <div>
-            <h1 className="text-[28px] font-semibold text-[#1e1b4b] leading-tight">
-              {title}
-            </h1> 
+            <TextGenerateEffect 
+              words={title} 
+              className="text-[28px] font-semibold text-[#1e1b4b] leading-tight m-0" 
+            />
             {subtitle && (
               <p className="text-[15px] text-gray-500 mt-1">
                 {subtitle}
@@ -30,12 +32,15 @@ const PageHeader = ({
             )}
           </div>
           {buttonText && onButtonClick && (
-            <button 
-              onClick={onButtonClick}
-              className="mt-4 sm:mt-0 bg-[#0f172a] hover:bg-[#1e293b] text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-colors shadow-sm"
-            >
-              {buttonText}
-            </button>
+            <div className="mt-4 sm:mt-0">
+              <button 
+                onClick={onButtonClick}
+                className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-2.5 rounded-xl font-medium shadow-md shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/40 transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                <span className="text-lg leading-none font-light">+</span>
+                {buttonText}
+              </button>
+            </div>
           )}
         </div>
 

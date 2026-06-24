@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import PageHeader from "../shared/PageHeader";
 import { getMyApplications, getSavedJobs } from '../../api/applications';
+import { BentoGrid, BentoGridItem } from '../ui/bento-grid';
 
 const DashboardOverview = () => {
   const [user, setUser] = useState({
@@ -179,23 +180,21 @@ const DashboardOverview = () => {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <BentoGrid className="mb-8">
         {stats.map((stat, index) => {
           const IconComponent = stat.icon;
           return (
-            <div key={index} className="bg-white rounded-xl p-6 border border-gray-200 shadow hover:shadow-lg transition-shadow">
-              <div className="flex items-center justify-between mb-4">
-                <div className={`p-3 rounded-lg ${stat.color}`}>
-                  <IconComponent className="h-6 w-6 text-white" />
-                </div>
-                <span className="text-sm text-green-600 font-medium">{stat.change}</span>
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</h3>
-              <p className="text-gray-600 text-sm">{stat.label}</p>
-            </div>
+            <BentoGridItem
+              key={index}
+              title={stat.label}
+              value={stat.value}
+              change={stat.change}
+              colorClass={stat.color}
+              icon={<IconComponent className="h-6 w-6 text-white" />}
+            />
           );
         })}
-      </div>
+      </BentoGrid>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Recent Applications */}

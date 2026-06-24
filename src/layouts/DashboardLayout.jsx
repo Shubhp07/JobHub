@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
-import DashboardHeader from "../components/shared/DashboardHeader";
 import EmployerDashboard from "../components/dashboard/EmployerDashboard";
 import JobSeekerDashboard from "../components/dashboard/DashboardOverview";
 import Sidebar from "../components/dashboard/Sidebar";
@@ -64,9 +63,8 @@ const DashboardLayout = () => {
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
       />
-      <div className="flex flex-col flex-1 overflow-hidden">
-        <DashboardHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-        <main className="flex-1 overflow-y-auto p-4">
+      <div className="flex flex-col flex-1 overflow-hidden relative">
+        <main className="flex-1 overflow-y-auto p-4 pt-4">
           {renderDashboard()}
         </main>
       </div>

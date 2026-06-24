@@ -97,14 +97,60 @@ const HowItWorks = () => {
         const prevDesc = previousItem.querySelector(".step-desc");
         const prevNum = previousItem.querySelector(".step-num");
 
-        tl.to(titleElement, { color: "#FE5532", scale: 1.1, y: 0, ease: "back.out(2)", duration: 0.35 }, 0.5 * i)
-          .to(numElement, { color: "#FE5532", scale: 1.1, ease: "back.out(2)", duration: 0.35 }, "<")
-          .to(descElement, { height: "auto", opacity: 1, marginTop: 8, duration: 0.35 }, "<")
+        tl.to(
+          titleElement,
+          {
+            color: "#FE5532",
+            scale: 1.1,
+            y: 0,
+            ease: "back.out(2)",
+            duration: 0.35,
+          },
+          0.5 * i,
+        )
+          .to(
+            numElement,
+            {
+              color: "#FE5532",
+              scale: 1.1,
+              ease: "back.out(2)",
+              duration: 0.35,
+            },
+            "<",
+          )
+          .to(
+            descElement,
+            { height: "auto", opacity: 1, marginTop: 8, duration: 0.35 },
+            "<",
+          )
           .to(slides[i], { autoAlpha: 1, duration: 0.35 }, "<")
 
-          .to(prevTitle, { color: "#475569", scale: 0.85, y: 10, ease: "power2.inOut", duration: 0.35 }, "<")
-          .to(prevNum, { color: "#334155", scale: 0.85, ease: "power2.inOut", duration: 0.35 }, "<")
-          .to(prevDesc, { height: 0, opacity: 0, marginTop: 0, duration: 0.35 }, "<")
+          .to(
+            prevTitle,
+            {
+              color: "#475569",
+              scale: 0.85,
+              y: 10,
+              ease: "power2.inOut",
+              duration: 0.35,
+            },
+            "<",
+          )
+          .to(
+            prevNum,
+            {
+              color: "#334155",
+              scale: 0.85,
+              ease: "power2.inOut",
+              duration: 0.35,
+            },
+            "<",
+          )
+          .to(
+            prevDesc,
+            { height: 0, opacity: 0, marginTop: 0, duration: 0.35 },
+            "<",
+          )
           .to(slides[i - 1], { autoAlpha: 0, duration: 0.35 }, "<");
       });
 
@@ -134,7 +180,7 @@ const HowItWorks = () => {
       <div className="absolute top-1/3 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-spenceSecondary/5 rounded-full blur-[130px] pointer-events-none" />
       <div className="absolute bottom-1/3 right-1/4 translate-x-1/2 translate-y-1/2 w-[600px] h-[600px] bg-spenceSecondary/5 rounded-full blur-[130px] pointer-events-none" />
 
-      <div className="content w-full max-w-7xl mx-auto px-6 lg:px-8 grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-20 items-center relative">
+      <div className="content w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 lg:gap-16 items-center relative">
         {/* Left Side: Steps List (Col span 4) */}
         <div className="md:col-span-4 lg:col-span-4">
           <h2 className="font-serif text-3xl md:text-5xl font-bold text-white mb-10 tracking-tight">
@@ -173,13 +219,13 @@ const HowItWorks = () => {
         </div>
 
         {/* Right Side: Slides (Col span 8) */}
-        <div className="md:col-span-8 lg:col-span-8 relative w-full h-[400px] md:h-[550px] flex items-center justify-center">
+        <div className="md:col-span-8 lg:col-span-8 relative w-full h-[400px] md:h-[580px] lg:h-[620px] flex items-center justify-center">
           {steps.map((step, index) => (
             <div
               key={index}
               className="slide absolute inset-0 flex items-center justify-center opacity-0 invisible"
             >
-              <div className="relative p-2 bg-[#132b36]/80 backdrop-blur-md border border-[#1e3d4c] rounded-3xl shadow-3xl shadow-black/50 w-full max-w-[800px]">
+              <div className="relative p-2 bg-[#132b36]/80 backdrop-blur-md border border-[#1e3d4c] rounded-3xl shadow-3xl shadow-black/50 w-full max-w-full">
                 <img
                   src={step.image}
                   alt={step.title}

@@ -63,8 +63,8 @@ const FeaturedJobs = () => {
 
   // Accordion filters open state
   const [openFilters, setOpenFilters] = useState({
-    category: true,
-    jobType: true,
+    category: false,
+    jobType: false,
   });
 
   const toggleFilter = (key) => {

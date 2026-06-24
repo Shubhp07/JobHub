@@ -28,8 +28,8 @@ const JobsPage = () => {
 
   // Accordion filters open state
   const [openFilters, setOpenFilters] = useState({
-    search: true,
-    department: true,
+    search: false,
+    department: false,
     jobType: false,
     experience: false,
     location: false,

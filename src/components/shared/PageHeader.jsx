@@ -16,17 +16,17 @@ const PageHeader = ({
   searchPlaceholder = "Search...",
 }) => {
   return (
-    <div className="bg-[#fafafa] pt-8 pb-6 px-6 border-b border-gray-100">
+    <div className="bg-transparent pt-8 pb-6 px-6 border-b border-[#183947]">
       <div className="w-full">
         {/* Top Row: Title and Button */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
           <div>
             <TextGenerateEffect 
               words={title} 
-              className="text-[28px] font-semibold text-[#1e1b4b] leading-tight m-0" 
+              className="text-[28px] font-bold font-serif text-white leading-tight m-0" 
             />
             {subtitle && (
-              <p className="text-[15px] text-gray-500 mt-1">
+              <p className="text-[15px] text-slate-400 mt-1">
                 {subtitle}
               </p>
             )}
@@ -35,7 +35,7 @@ const PageHeader = ({
             <div className="mt-4 sm:mt-0">
               <button 
                 onClick={onButtonClick}
-                className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-2.5 rounded-xl font-medium shadow-md shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/40 transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="flex items-center gap-2 bg-spenceSecondary hover:bg-[#e04523] text-white px-6 py-2.5 rounded-full font-medium shadow-sm hover:shadow-md hover:shadow-spenceSecondary/25 transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-spenceSecondary focus:ring-offset-2"
               >
                 <span className="text-lg leading-none font-light">+</span>
                 {buttonText}
@@ -49,25 +49,25 @@ const PageHeader = ({
           <div className="flex justify-end items-center gap-3">
             {showSearch && (
               <div className="relative w-64">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input
                   type="text"
                   placeholder={searchPlaceholder}
                   value={searchTerm}
                   onChange={(e) => onSearchChange?.(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white"
+                  className="w-full pl-9 pr-3 py-2 text-sm border border-[#1e3d4c] rounded-lg focus:outline-none focus:ring-2 focus:ring-spenceSecondary/20 focus:border-spenceSecondary bg-spenceCard text-white placeholder-slate-500"
                 />
               </div>
             )}
             
             {showViewToggle && (
-              <div className="flex items-center border border-gray-200 rounded-lg bg-white p-0.5">
+              <div className="flex items-center border border-[#1e3d4c] rounded-lg bg-spenceCard p-0.5">
                 <button
                   onClick={() => onViewModeChange?.("grid")}
                   className={`p-1.5 rounded-md transition-colors ${
                     viewMode === "grid" 
-                      ? "bg-[#0f172a] text-white" 
-                      : "text-gray-400 hover:text-gray-600"
+                      ? "bg-spenceSecondary text-white" 
+                      : "text-slate-400 hover:text-slate-200"
                   }`}
                 >
                   <LayoutGrid className="w-4 h-4" />
@@ -76,8 +76,8 @@ const PageHeader = ({
                   onClick={() => onViewModeChange?.("list")}
                   className={`p-1.5 rounded-md transition-colors ${
                     viewMode === "list" 
-                      ? "bg-[#0f172a] text-white" 
-                      : "text-gray-400 hover:text-gray-600"
+                      ? "bg-spenceSecondary text-white" 
+                      : "text-slate-400 hover:text-slate-200"
                   }`}
                 >
                   <List className="w-4 h-4" />

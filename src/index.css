@@ -1,3 +1,46 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Aceternity-style global dot background pattern overlay */
+body, .bg-spencePrimary, footer {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Premium dark theme form controls for Spence theme */
+input[type="text"], 
+input[type="number"], 
+input[type="url"], 
+input[type="date"],
+input[type="email"],
+input[type="password"],
+select, 
+textarea {
+  background-color: #0a1a21 !important;
+  border-color: #1e3d4c !important;
+  color: #e2e8f0 !important;
+}
+
+input[type="text"]::placeholder, 
+input[type="number"]::placeholder, 
+input[type="url"]::placeholder, 
+input[type="email"]::placeholder,
+textarea::placeholder {
+  color: #475569 !important;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #FE5532 !important;
+  --tw-ring-color: rgba(254, 85, 50, 0.25) !important;
+}
+
+label {
+  color: #94a3b8 !important;
+}
+
+option {
+  background-color: #0a1a21 !important;
+  color: #e2e8f0 !important;
+}
+

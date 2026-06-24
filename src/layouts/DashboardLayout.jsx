@@ -54,7 +54,7 @@ const DashboardLayout = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex h-screen bg-spencePrimary overflow-hidden text-slate-300">
       <Sidebar
         isEmployer={isEmployer}
         activeTab={activeTab}

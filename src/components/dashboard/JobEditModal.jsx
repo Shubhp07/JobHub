@@ -147,15 +147,15 @@ const JobEditModal = ({ job, onClose, onUpdate }) => {
     >
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-xl p-6 max-w-xl w-full max-h-[90vh] overflow-auto"
+        className="bg-spenceCard border border-[#1e3d4c] rounded-2xl p-6 max-w-xl w-full max-h-[90vh] overflow-auto shadow-2xl text-slate-300"
         noValidate
       >
-        <h2 className="text-2xl font-semibold mb-6 text-gray-900">
+        <h2 className="text-2xl font-bold font-serif mb-6 text-white">
           Edit Job: {job.title}
         </h2>
 
         {error && (
-          <div className="mb-4 rounded bg-red-100 p-3 text-red-700 font-medium" role="alert">
+          <div className="mb-4 rounded bg-red-500/10 border border-red-500/30 p-3 text-red-400 font-medium" role="alert">
             {error}
           </div>
         )}
@@ -295,16 +295,16 @@ const JobEditModal = ({ job, onClose, onUpdate }) => {
             type="button"
             onClick={onClose}
             disabled={loading}
-            className="px-6 py-2 rounded-md bg-gray-300 text-gray-800 hover:bg-gray-400 transition-colors"
+            className="px-6 py-2 rounded-full bg-spenceCard border border-[#1e3d4c] text-slate-300 hover:bg-spencePrimary/50 transition-all font-medium"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className={`px-6 py-2 rounded-md text-white ${
-              loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
-            } transition-colors`}
+            className={`px-6 py-2 rounded-full text-white font-medium ${
+              loading ? "bg-spenceSecondary/50 cursor-not-allowed" : "bg-spenceSecondary hover:bg-[#e04523] shadow-sm hover:shadow-spenceSecondary/25"
+            } transition-all`}
           >
             {loading ? "Saving..." : "Save Changes"}
           </button>

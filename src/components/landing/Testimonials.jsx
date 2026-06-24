@@ -1,5 +1,9 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Star, Quote } from 'lucide-react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const testimonials = [
   {
@@ -29,46 +33,94 @@ const testimonials = [
 ];
 
 const Testimonials = () => {
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Header reveal
+      gsap.fromTo('.testimonials-header', 
+        { opacity: 0, y: 40, scale: 0.95 },
+        { 
+          opacity: 1, 
+          y: 0, 
+          scale: 1,
+          duration: 0.8,
+          ease: 'back.out(1.4)',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 80%',
+            toggleActions: 'play none none none'
+          }
+        }
+      );
+
+      // Staggered cards reveal
+      gsap.fromTo('.testimonial-card', 
+        { opacity: 0, y: 50, scale: 0.9 },
+        { 
+          opacity: 1, 
+          y: 0, 
+          scale: 1,
+          duration: 0.7,
+          stagger: 0.12,
+          ease: 'back.out(1.4)',
+          scrollTrigger: {
+            trigger: '.testimonials-grid',
+            start: 'top 85%',
+            toggleActions: 'play none none none'
+          }
+        }
+      );
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="py-20 bg-gradient-to-br from-blue-50 to-purple-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+    <section 
+      ref={sectionRef}
+      className="py-24 bg-spencePrimary border-t border-[#1e3d4c] relative overflow-hidden"
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="testimonials-header text-center mb-20 opacity-0">
+          <h2 className="text-3xl md:text-5xl font-bold font-serif text-white mb-4">
             Success Stories
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-slate-400 max-w-2xl mx-auto">
             Hear from professionals who found their dream jobs through JobHub
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="testimonials-grid grid grid-cols-1 md:grid-cols-3 gap-8">
           {testimonials.map((testimonial, index) => (
             <div
               key={index}
-              className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300"
+              className="testimonial-card opacity-0 bg-spenceCard border border-[#1e3d4c] rounded-2xl p-8 hover:border-spenceSecondary/40 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-spenceSecondary/5 flex flex-col justify-between"
             >
-              <div className="flex items-center mb-4">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
-                ))}
-              </div>
-              
-              <div className="relative mb-6">
-                <Quote className="absolute -top-2 -left-2 h-8 w-8 text-blue-100" />
-                <p className="text-gray-700 leading-relaxed pl-6">
-                  {testimonial.content}
-                </p>
+              <div>
+                <div className="flex items-center mb-5">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="h-4 w-4 text-yellow-400 fill-current" />
+                  ))}
+                </div>
+                
+                <div className="relative mb-6">
+                  <Quote className="absolute -top-3 -left-3 h-8 w-8 text-spenceSecondary/15" />
+                  <p className="text-slate-300 leading-relaxed pl-6 text-sm">
+                    {testimonial.content}
+                  </p>
+                </div>
               </div>
 
-              <div className="flex items-center">
+              <div className="flex items-center pt-4 border-t border-[#1e3d4c]/50">
                 <img
                   src={testimonial.image}
                   alt={testimonial.name}
-                  className="w-12 h-12 rounded-full object-cover mr-4"
+                  className="w-12 h-12 rounded-full object-cover mr-4 border border-[#1e3d4c]"
                 />
                 <div>
-                  <h4 className="font-semibold text-gray-900">{testimonial.name}</h4>
-                  <p className="text-gray-600 text-sm">
+                  <h4 className="font-bold font-serif text-white">{testimonial.name}</h4>
+                  <p className="text-slate-400 text-xs">
                     {testimonial.role} at {testimonial.company}
                   </p>
                 </div>

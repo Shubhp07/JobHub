@@ -5,7 +5,18 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   darkMode: "class",
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        spencePrimary: '#0E232D',
+        spenceSecondary: '#FE5532',
+        spenceDarker: '#0a1a21',
+        spenceCard: '#132b36',
+      },
+      fontFamily: {
+        serif: ['"Playfair Display"', 'serif'],
+        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+      },
+    },
   },
   plugins: [addVariablesForColors],
 };

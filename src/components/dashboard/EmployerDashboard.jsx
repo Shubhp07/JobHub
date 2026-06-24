@@ -212,10 +212,10 @@ const Dashboard = ({ activeTab }) => {
             {/* Jobs Column */}
             <div className="xl:col-span-2 space-y-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-gray-900">
+                <h2 className="text-xl font-bold font-serif text-white">
                   Recent Jobs
                 </h2>
-                <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                <button className="text-spenceSecondary hover:text-[#e04523] text-sm font-medium">
                   View all jobs
                 </button>
               </div>
@@ -241,10 +241,10 @@ const Dashboard = ({ activeTab }) => {
           {/* Recent Applications */}
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-gray-900">
+              <h2 className="text-xl font-bold font-serif text-white">
                 Recent Applications
               </h2>
-              <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+              <button className="text-spenceSecondary hover:text-[#e04523] text-sm font-medium">
                 View all applications
               </button>
             </div>
@@ -277,13 +277,13 @@ const Dashboard = ({ activeTab }) => {
   // Placeholder for other tabs
   return (
     <div className="p-6">
-      <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+      <div className="bg-spenceCard rounded-2xl border border-[#1e3d4c] p-8 text-center shadow-sm">
+        <h2 className="text-2xl font-bold font-serif text-white mb-2">
           {activeTab
             ? activeTab.charAt(0).toUpperCase() + activeTab.slice(1)
             : "Dashboard"}
         </h2>
-        <p className="text-gray-600">This section is coming soon!</p>
+        <p className="text-slate-400">This section is coming soon!</p>
       </div>
     </div>
   );

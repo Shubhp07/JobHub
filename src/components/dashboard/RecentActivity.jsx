@@ -14,27 +14,27 @@ const RecentActivity = ({ activities }) => {
 
   const getActivityColor = (type) => {
     switch (type) {
-      case 'application': return 'bg-blue-50 text-blue-600';
-      case 'message': return 'bg-green-50 text-green-600';
-      case 'view': return 'bg-purple-50 text-purple-600';
-      case 'interview': return 'bg-orange-50 text-orange-600';
-      default: return 'bg-gray-50 text-gray-600';
+      case 'application': return 'bg-spencePrimary/50 text-cyan-400 border border-cyan-500/20';
+      case 'message': return 'bg-spencePrimary/50 text-emerald-400 border border-emerald-500/20';
+      case 'view': return 'bg-spencePrimary/50 text-violet-400 border border-violet-500/20';
+      case 'interview': return 'bg-spencePrimary/50 text-spenceSecondary border border-spenceSecondary/20';
+      default: return 'bg-spencePrimary/50 text-slate-400 border border-slate-700/20';
     }
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
+    <div className="bg-spenceCard rounded-2xl border border-[#1e3d4c] p-6 shadow-sm">
+      <h3 className="text-lg font-bold font-serif text-white mb-4">Recent Activity</h3>
       <div className="space-y-4">
         {activities.map((activity) => (
           <div key={activity.id} className="flex items-start gap-3">
-            <div className={`p-2 rounded-lg flex-shrink-0 ${getActivityColor(activity.type)}`}>
+            <div className={`p-2 rounded-lg flex-shrink-0 flex items-center justify-center ${getActivityColor(activity.type)}`}>
               {getActivityIcon(activity.type)}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900">{activity.title}</p>
-              <p className="text-sm text-gray-600 mb-1">{activity.description}</p>
-              <div className="flex items-center gap-1 text-xs text-gray-500">
+              <p className="text-sm font-semibold text-white">{activity.title}</p>
+              <p className="text-sm text-slate-400 mb-1">{activity.description}</p>
+              <div className="flex items-center gap-1 text-xs text-slate-500">
                 <Clock className="w-3 h-3" />
                 {activity.time}
               </div>
@@ -42,7 +42,7 @@ const RecentActivity = ({ activities }) => {
           </div>
         ))}
       </div>
-      <button className="w-full mt-4 text-sm text-blue-600 hover:text-blue-700 font-medium">
+      <button className="w-full mt-4 text-sm text-spenceSecondary hover:text-[#e04523] font-medium transition-colors">
         View all activity
       </button>
     </div>

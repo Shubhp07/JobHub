@@ -84,7 +84,7 @@ const Sidebar = ({ menuItems, activeTab, setActiveTab, sidebarOpen = true, setSi
   };
 
   return (
-    <aside className={`bg-white border-r border-gray-200 h-screen sticky top-0 flex flex-col pt-4 transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-20'}`}>
+    <aside className={`bg-spenceDarker border-r border-[#183947] h-screen sticky top-0 flex flex-col pt-4 transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-20'}`}>
       {/* Logo as Toggle */}
       <div className={`hidden lg:flex items-center ${sidebarOpen ? 'px-4' : 'justify-center'} mb-6`}>
         <button 
@@ -92,8 +92,8 @@ const Sidebar = ({ menuItems, activeTab, setActiveTab, sidebarOpen = true, setSi
           className="flex items-center focus:outline-none hover:opacity-80 transition-opacity"
           title="Toggle Sidebar"
         >
-          <Search className="h-8 w-8 text-blue-600 shrink-0" />
-          {sidebarOpen && <span className="text-2xl font-bold text-gray-900 ml-2">JobHub</span>}
+          <Search className="h-8 w-8 text-spenceSecondary shrink-0" />
+          {sidebarOpen && <span className="text-2xl font-bold font-serif text-white ml-2">JobHub<span className="text-spenceSecondary">.</span></span>}
         </button>
       </div>
 
@@ -107,18 +107,18 @@ const Sidebar = ({ menuItems, activeTab, setActiveTab, sidebarOpen = true, setSi
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors ${
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all ${
                 isActive
-                  ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700'
-                  : 'text-gray-700 hover:bg-gray-50'
+                  ? 'bg-spenceCard text-white border-l-2 border-spenceSecondary'
+                  : 'text-slate-400 hover:bg-spenceCard/40 hover:text-white'
               }`}
             >
-              <Icon className={`w-5 h-5 ${isActive ? 'text-blue-700' : 'text-gray-400'} ${!sidebarOpen && "mx-auto"}`} />
+              <Icon className={`w-5 h-5 ${isActive ? 'text-spenceSecondary' : 'text-slate-400'} ${!sidebarOpen && "mx-auto"}`} />
               {sidebarOpen && (
                 <>
                   <span className="font-medium">{item.label}</span>
                   {item.badge && (
-                    <span className={`ml-auto text-white text-xs px-2 py-1 rounded-full ${item.badgeColor || 'bg-blue-600'}`}>
+                    <span className={`ml-auto text-white text-xs px-2 py-1 rounded-full ${item.badgeColor || 'bg-spenceSecondary'}`}>
                       {item.badge}
                     </span>
                   )}
@@ -130,38 +130,38 @@ const Sidebar = ({ menuItems, activeTab, setActiveTab, sidebarOpen = true, setSi
       </nav>
 
       {/* Logout Button */}
-      <div className="p-4 border-t border-gray-200">
+      <div className="p-4 border-t border-[#183947]">
         
         {/* User Profile toggle */}
         <div className="relative mb-2">
           {showUserDetails && sidebarOpen && (
-            <div className="absolute bottom-full left-0 mb-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg p-3 z-50">
+            <div className="absolute bottom-full left-0 mb-2 w-full bg-spenceCard border border-[#1e3d4c] rounded-lg shadow-lg p-3 z-50">
               <div className="flex flex-col gap-1">
-                <p className="text-sm font-bold text-gray-900 truncate">{user.name}</p>
-                <p className="text-xs text-gray-500 truncate">{user.email}</p>
-                <p className="text-xs font-semibold text-blue-600 mt-1">{user.userType}</p>
+                <p className="text-sm font-bold text-white truncate">{user.name}</p>
+                <p className="text-xs text-slate-400 truncate">{user.email}</p>
+                <p className="text-xs font-semibold text-spenceSecondary mt-1">{user.userType}</p>
               </div>
             </div>
           )}
           <button 
             onClick={() => setShowUserDetails(!showUserDetails)}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-slate-300 hover:bg-spenceCard/40 hover:text-white transition-colors"
           >
             <div className="relative shrink-0">
               <img
                 src={getProfilePictureUrl()}
                 alt={`${user.name}'s profile`}
-                className="h-8 w-8 rounded-full object-cover border border-gray-200"
+                className="h-8 w-8 rounded-full object-cover border border-[#1e3d4c]"
                 onError={(e) => {
                   e.target.src = "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.name) + "&background=ef4444&color=fff&size=100";
                 }}
               />
-              <div className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-white"></div>
+              <div className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-spenceDarker"></div>
             </div>
             {sidebarOpen && (
               <>
                 <span className="font-medium truncate flex-1 text-sm">{user.name}</span>
-                {showUserDetails ? <ChevronDown className="w-4 h-4 shrink-0 text-gray-400" /> : <ChevronUp className="w-4 h-4 shrink-0 text-gray-400" />}
+                {showUserDetails ? <ChevronDown className="w-4 h-4 shrink-0 text-slate-400" /> : <ChevronUp className="w-4 h-4 shrink-0 text-slate-400" />}
               </>
             )}
           </button>
@@ -169,9 +169,9 @@ const Sidebar = ({ menuItems, activeTab, setActiveTab, sidebarOpen = true, setSi
 
         <button 
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left text-slate-400 hover:bg-rose-950/20 hover:text-rose-500 transition-colors"
         >
-          <LogOut className={`w-5 h-5 text-gray-400 hover:text-red-600 transition-colors ${!sidebarOpen && "mx-auto"}`} />
+          <LogOut className={`w-5 h-5 text-slate-500 hover:text-rose-500 transition-colors ${!sidebarOpen && "mx-auto"}`} />
           {sidebarOpen && <span className="font-medium">Logout</span>}
         </button>
       </div>

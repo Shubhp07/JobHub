@@ -13,6 +13,8 @@ import Testimonials from '../components/landing/Testimonials';
 import CTA from '../components/landing/CTA';
 import Footer from '../components/landing/Footer';
 
+import BackgroundPlus from '../components/ui/BackgroundPlus';
+
 const LandingPage = () => {
   useEffect(() => {
     // Initialize Lenis smooth scroll
@@ -40,17 +42,26 @@ const LandingPage = () => {
   }, []);
 
   return (
-    <>
-      <Header />
-      <Hero />
-      <FeaturedJobs />
-      <HowItWorks />
-      <Features />
-      <JobCategories />
-      <Testimonials />
-      <CTA />
-      <Footer />
-    </>
+    <div className="relative">
+      {/* Global plus-pattern background */}
+      <BackgroundPlus
+        plusColor="#FE5532"
+        plusSize={50}
+        fade={false}
+        className="fixed z-0 pointer-events-none opacity-[0.03]"
+      />
+      <div className="relative z-10">
+        <Header />
+        <Hero />
+        <FeaturedJobs />
+        <HowItWorks />
+        <Features />
+        <JobCategories />
+        <Testimonials />
+        <CTA />
+        <Footer />
+      </div>
+    </div>
   );
 };
 

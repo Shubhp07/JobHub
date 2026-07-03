@@ -45,13 +45,14 @@ const HowItWorks = () => {
       const listItems = gsap.utils.toArray("li", listRef.current);
       const slides = gsap.utils.toArray(".slide", pinSectionRef.current);
 
+
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: pinSectionRef.current,
           start: "top top",
           end: `+=${listItems.length * 100}%`,
           pin: true,
-          scrub: true,
+          scrub: 1.5,
         },
       });
 
@@ -69,12 +70,14 @@ const HowItWorks = () => {
           gsap.set(descElement, { height: 0, opacity: 0, marginTop: 0 });
           gsap.set(titleElement, { color: "#475569", scale: 0.85, y: 10 });
           gsap.set(numElement, { color: "#334155", scale: 0.85 });
-          gsap.set(slides[i], { autoAlpha: 0 });
+          // Place non-active slides offscreen below
+          gsap.set(slides[i], { y: "100%", opacity: 1, visibility: "visible" });
         } else {
           gsap.set(titleElement, { color: "#FE5532", scale: 1.1, y: 0 });
           gsap.set(numElement, { color: "#FE5532", scale: 1.1 });
           gsap.set(descElement, { height: "auto", opacity: 1, marginTop: 8 });
-          gsap.set(slides[i], { autoAlpha: 1 });
+          // Place active slide centered on screen
+          gsap.set(slides[i], { y: "0%", opacity: 1, visibility: "visible" });
         }
       });
 
@@ -103,27 +106,30 @@ const HowItWorks = () => {
             color: "#FE5532",
             scale: 1.1,
             y: 0,
-            ease: "back.out(2)",
-            duration: 0.35,
+            ease: "power3.out",
+            duration: 0.6,
           },
-          0.5 * i,
+          0.6 * i,
         )
           .to(
             numElement,
             {
               color: "#FE5532",
               scale: 1.1,
-              ease: "back.out(2)",
-              duration: 0.35,
+              ease: "power3.out",
+              duration: 0.6,
             },
             "<",
           )
           .to(
             descElement,
-            { height: "auto", opacity: 1, marginTop: 8, duration: 0.35 },
+            { height: "auto", opacity: 1, marginTop: 8, duration: 0.6 },
             "<",
           )
-          .to(slides[i], { autoAlpha: 1, duration: 0.35 }, "<")
+          // Slide the incoming background up to the screen center
+          .to(slides[i], { y: "0%", ease: "power3.inOut", duration: 0.6 }, "<")
+          // Slide the previous background up and offscreen to the top
+          .to(slides[i - 1], { y: "-100%", ease: "power3.inOut", duration: 0.6 }, "<")
 
           .to(
             prevTitle,
@@ -131,27 +137,26 @@ const HowItWorks = () => {
               color: "#475569",
               scale: 0.85,
               y: 10,
-              ease: "power2.inOut",
-              duration: 0.35,
+              ease: "power3.inOut",
+              duration: 0.6,
             },
-            "<",
+            0.6 * i,
           )
           .to(
             prevNum,
             {
               color: "#334155",
               scale: 0.85,
-              ease: "power2.inOut",
-              duration: 0.35,
+              ease: "power3.inOut",
+              duration: 0.6,
             },
             "<",
           )
           .to(
             prevDesc,
-            { height: 0, opacity: 0, marginTop: 0, duration: 0.35 },
+            { height: 0, opacity: 0, marginTop: 0, duration: 0.6 },
             "<",
-          )
-          .to(slides[i - 1], { autoAlpha: 0, duration: 0.35 }, "<");
+          );
       });
 
       // Complete progress bar fill animation in sync
@@ -174,22 +179,36 @@ const HowItWorks = () => {
     <section
       id="how-it-works"
       ref={pinSectionRef}
-      className="pin-section w-full h-screen bg-spencePrimary border-t border-b border-[#1e3d4c] flex items-center justify-center overflow-hidden relative"
+      className="pin-section w-full h-screen bg-spencePrimary border-t border-b border-[#1e3d4c] flex items-center justify-start overflow-hidden relative"
     >
-      {/* Dynamic Background Glows */}
-      <div className="absolute top-1/3 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-spenceSecondary/5 rounded-full blur-[130px] pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 translate-x-1/2 translate-y-1/2 w-[600px] h-[600px] bg-spenceSecondary/5 rounded-full blur-[130px] pointer-events-none" />
+      {/* Full Page Slides Background */}
+      <div className="absolute inset-0 w-full h-full z-0 overflow-hidden">
+        {steps.map((step, index) => (
+          <div
+            key={index}
+            className="slide absolute inset-0 w-full h-full"
+          >
+            <img
+              src={step.image}
+              alt={step.title}
+              className="w-full h-full object-cover"
+            />
+            {/* Subtle gradient for text readability */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0E232D]/70 via-[#0E232D]/35 to-transparent" />
+          </div>
+        ))}
+      </div>
 
-      <div className="content w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 lg:gap-16 items-center relative">
-        {/* Left Side: Steps List (Col span 4) */}
-        <div className="md:col-span-4 lg:col-span-4">
+      {/* Content Overlay */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-24">
+        <div className="max-w-2xl">
           <h2 className="font-serif text-3xl md:text-5xl font-bold text-white mb-10 tracking-tight">
             Our Process
           </h2>
 
           <div className="relative pl-8">
             {/* Background vertical tracker bar */}
-            <div className="absolute left-0 top-0 w-[3px] h-full bg-[#1e3d4c] rounded-full"></div>
+            <div className="absolute left-0 top-0 w-[3px] h-full bg-[#1e3d4c]/50 rounded-full"></div>
             {/* Active vertical progress fill */}
             <div
               ref={fillRef}
@@ -207,7 +226,7 @@ const HowItWorks = () => {
                       <h3 className="step-title inline-block font-serif text-2xl md:text-3xl font-bold leading-tight">
                         {step.title}
                       </h3>
-                      <p className="step-desc text-slate-400 text-sm md:text-base leading-relaxed overflow-hidden max-w-md">
+                      <p className="step-desc text-slate-300 text-sm md:text-base leading-relaxed overflow-hidden max-w-md">
                         {step.description}
                       </p>
                     </div>
@@ -216,24 +235,6 @@ const HowItWorks = () => {
               ))}
             </ul>
           </div>
-        </div>
-
-        {/* Right Side: Slides (Col span 8) */}
-        <div className="md:col-span-8 lg:col-span-8 relative w-full h-[400px] md:h-[580px] lg:h-[620px] flex items-center justify-center">
-          {steps.map((step, index) => (
-            <div
-              key={index}
-              className="slide absolute inset-0 flex items-center justify-center opacity-0 invisible"
-            >
-              <div className="relative p-2 bg-[#132b36]/80 backdrop-blur-md border border-[#1e3d4c] rounded-3xl shadow-3xl shadow-black/50 w-full max-w-full">
-                <img
-                  src={step.image}
-                  alt={step.title}
-                  className="w-full h-full aspect-[16/10] object-cover rounded-[20px] border border-[#1e3d4c]/50 shadow-inner"
-                />
-              </div>
-            </div>
-          ))}
         </div>
       </div>
     </section>

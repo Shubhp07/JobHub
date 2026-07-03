@@ -2,11 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Aceternity-style global dot background pattern overlay */
-body, .bg-spencePrimary, footer {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-  background-size: 24px 24px;
-}
+
 
 /* Premium dark theme form controls for Spence theme */
 input[type="text"], 

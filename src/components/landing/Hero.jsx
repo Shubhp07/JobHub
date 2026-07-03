@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
+import { motion } from 'framer-motion';
 
 const Hero = () => {
   const titleRef = useRef(null);
@@ -46,9 +47,18 @@ const Hero = () => {
       <div className="absolute inset-0 bg-black/35"></div>
 
       {/* Dotted Grid Overlay */}
-      <div className="absolute right-[15%] top-1/3 grid grid-cols-5 gap-5 opacity-90 hidden md:grid">
-        {Array.from({ length: 25 }).map((_, i) => (
-          <span key={i} className="w-1.5 h-1.5 rounded-full bg-spenceSecondary"></span>
+      <div className="absolute right-[12%] top-1/3 grid grid-cols-10 gap-3.5 opacity-90 hidden md:grid">
+        {Array.from({ length: 80 }).map((_, i) => (
+          <motion.span
+            key={i}
+            className="w-1.5 h-1.5 rounded-full bg-spenceSecondary cursor-pointer"
+            whileHover={{
+              scale: 2.2,
+              backgroundColor: '#ffffff',
+              boxShadow: '0 0 10px #FE5532',
+            }}
+            transition={{ type: 'spring', stiffness: 450, damping: 15 }}
+          />
         ))}
       </div>
 

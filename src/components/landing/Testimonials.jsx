@@ -61,47 +61,63 @@ export default function Testimonials() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Header reveal
-      gsap.fromTo(
-        ".testimonials-header",
-        { opacity: 0, y: 40, scale: 0.95 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.8,
-          ease: "back.out(1.4)",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 80%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
+      let mm = gsap.matchMedia();
 
-      // Create the pin/scroll trigger
-      scrollTriggerRef.current = ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: "top top",
-        end: "+=200%",
-        pin: true,
-        scrub: true,
-        onUpdate: (self) => {
-          const progress = self.progress;
-          let index = 0;
-          if (progress > 0.35 && progress <= 0.7) {
-            index = 1;
-          } else if (progress > 0.7) {
-            index = 2;
+      mm.add("(min-width: 1024px)", () => {
+        // Header reveal
+        gsap.fromTo(
+          ".testimonials-header",
+          { opacity: 0, y: 40, scale: 0.95 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.8,
+            ease: "back.out(1.4)",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 80%",
+              toggleActions: "play none none none",
+            },
           }
+        );
 
-          setCurrentIndex((prev) => {
-            if (prev !== index) {
-              return index;
+        // Create the pin/scroll trigger for desktop
+        scrollTriggerRef.current = ScrollTrigger.create({
+          trigger: sectionRef.current,
+          start: "top top",
+          end: "+=200%",
+          pin: true,
+          scrub: true,
+          onUpdate: (self) => {
+            const progress = self.progress;
+            let index = 0;
+            if (progress > 0.35 && progress <= 0.7) {
+              index = 1;
+            } else if (progress > 0.7) {
+              index = 2;
             }
-            return prev;
-          });
-        },
+
+            setCurrentIndex((prev) => (prev !== index ? index : prev));
+          },
+        });
+      });
+
+      mm.add("(max-width: 1023px)", () => {
+        // Simple header reveal for mobile
+        gsap.fromTo(
+          ".testimonials-header",
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 80%",
+            },
+          }
+        );
       });
     }, sectionRef);
 
@@ -151,7 +167,7 @@ export default function Testimonials() {
   return (
     <section
       ref={sectionRef}
-      className="pin-section w-full h-screen bg-spencePrimary border-t border-[#1e3d4c] relative overflow-hidden font-sans flex flex-col justify-center"
+      className="pin-section w-full lg:h-screen bg-spencePrimary border-t border-[#1e3d4c] relative lg:overflow-hidden font-sans flex flex-col justify-center py-20 lg:py-0"
     >
       {/* Background Glows */}
       <div className="absolute top-1/4 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-spenceSecondary/5 rounded-full blur-[130px] pointer-events-none" />
@@ -159,11 +175,11 @@ export default function Testimonials() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
         {/* Header */}
-        <div className="testimonials-header text-center mb-10 md:mb-16 opacity-0">
-          <h2 className="text-3xl md:text-5xl font-bold font-serif text-white mb-3">
+        <div className="testimonials-header text-center mb-8 md:mb-12 lg:mb-6 xl:mb-16 opacity-0">
+          <h2 className="text-3xl md:text-4xl xl:text-5xl font-bold font-serif text-white mb-2 lg:mb-1 xl:mb-3">
             Success Stories
           </h2>
-          <p className="text-base md:text-lg text-slate-400 max-w-2xl mx-auto">
+          <p className="text-sm md:text-base xl:text-lg text-slate-400 max-w-2xl mx-auto">
             Hear from professionals who found their dream jobs through JobHub
           </p>
         </div>
@@ -171,9 +187,9 @@ export default function Testimonials() {
         {/* Carousel Container */}
         <div className="w-full max-w-5xl mx-auto px-4">
           {/* Desktop layout */}
-          <div className="hidden md:flex relative items-center min-h-[470px]">
+          <div className="hidden md:flex relative items-center min-h-[380px] lg:min-h-[340px] xl:min-h-[470px]">
             {/* Avatar */}
-            <div className="w-[470px] h-[470px] rounded-3xl overflow-hidden bg-spenceCard border border-[#1e3d4c] flex-shrink-0 shadow-2xl relative">
+            <div className="w-[380px] h-[380px] lg:w-[340px] lg:h-[340px] xl:w-[470px] xl:h-[470px] rounded-3xl overflow-hidden bg-spenceCard border border-[#1e3d4c] flex-shrink-0 shadow-2xl relative">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentTestimonial.imageUrl}
@@ -194,7 +210,7 @@ export default function Testimonials() {
             </div>
 
             {/* Card */}
-            <div className="bg-[#132b36]/90 backdrop-blur-md border border-[#1e3d4c] rounded-3xl shadow-2xl p-10 ml-[-80px] z-10 max-w-xl flex-1 relative min-h-[380px] flex flex-col justify-between">
+            <div className="bg-[#132b36]/90 backdrop-blur-md border border-[#1e3d4c] rounded-3xl shadow-2xl p-8 lg:p-6 xl:p-10 ml-[-60px] lg:ml-[-80px] z-10 max-w-lg lg:max-w-xl flex-1 relative min-h-[320px] lg:min-h-[280px] xl:min-h-[380px] flex flex-col justify-between">
               <Quote className="absolute top-6 right-8 h-16 w-16 text-spenceSecondary/10 pointer-events-none" />
 
               <AnimatePresence mode="wait">
@@ -206,22 +222,22 @@ export default function Testimonials() {
                   transition={{ duration: 0.3, ease: "easeInOut" }}
                   className="flex flex-col h-full justify-between"
                 >
-                  <div className="mb-6">
-                    <div className="mb-4">
-                      <h3 className="text-2xl font-bold font-serif text-white mb-1">
+                  <div className="mb-4 lg:mb-3 xl:mb-6">
+                    <div className="mb-3 lg:mb-2 xl:mb-4">
+                      <h3 className="text-xl lg:text-2xl font-bold font-serif text-white mb-1">
                         {currentTestimonial.name}
                       </h3>
-                      <p className="text-sm font-medium text-spenceSecondary">
+                      <p className="text-xs lg:text-sm font-medium text-spenceSecondary">
                         {currentTestimonial.title}
                       </p>
                     </div>
 
-                    <p className="text-slate-300 text-base leading-relaxed">
+                    <p className="text-slate-300 text-sm lg:text-base leading-relaxed">
                       "{currentTestimonial.description}"
                     </p>
                   </div>
 
-                  <div className="flex space-x-4 pt-4 border-t border-[#1e3d4c]/50">
+                  <div className="flex space-x-4 pt-3 lg:pt-2 xl:pt-4 border-t border-[#1e3d4c]/50">
                     {socialIcons.map(({ icon: IconComponent, url, label }) => (
                       <a
                         key={label}
@@ -307,7 +323,7 @@ export default function Testimonials() {
           </div>
 
           {/* Bottom navigation */}
-          <div className="flex justify-center items-center gap-6 mt-12">
+          <div className="flex justify-center items-center gap-6 mt-8 lg:mt-6 xl:mt-12">
             {/* Previous */}
             <button
               onClick={handlePrevious}

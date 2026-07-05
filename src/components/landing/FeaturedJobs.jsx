@@ -333,16 +333,16 @@ const FeaturedJobs = () => {
                 const isHovered = hoveredJobId === job.id;
                 
                 return (
-                  <div
-                    key={job.id}
-                    onMouseEnter={() => setHoveredJobId(job.id)}
-                    onMouseLeave={() => setHoveredJobId(null)}
-                    className={`job-row py-10 px-8 transition-all duration-300 rounded-2xl flex flex-col justify-between gap-5 ${
-                      isHovered 
-                        ? "border-2 border-spenceSecondary bg-spenceCard shadow-2xl scale-[1.01]" 
-                        : "border-2 border-transparent bg-transparent"
-                    }`}
-                  >
+                    <div
+                      key={job.id}
+                      onMouseEnter={() => setHoveredJobId(job.id)}
+                      onMouseLeave={() => setHoveredJobId(null)}
+                      className={`job-row py-10 px-8 transition-all duration-300 rounded-2xl flex flex-col justify-between gap-5 ${
+                        isHovered 
+                          ? "border-2 border-spenceSecondary bg-spenceCard shadow-2xl scale-[1.01]" 
+                          : "border-2 border-[#1e3d4c] bg-spenceCard/40"
+                      }`}
+                    >
                     <div className="w-full">
                       {/* Inline Header Row */}
                       <div className="flex justify-between items-start gap-4 mb-3">

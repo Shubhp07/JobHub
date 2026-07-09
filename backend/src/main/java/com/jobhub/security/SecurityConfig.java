@@ -71,25 +71,23 @@ public class SecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers(
-                        "/api/auth/**",
-                        "/login/**",
-                        "/oauth2/**",
-                        "/swagger-ui/**",
-                        "/v3/api-docs/**",
-                        "/api/jobs/search",
-                        "/api/jobs",
-                        "/api/jobs/{id}",
-                        "/api/resumes/**",
-                        "/actuator/**"
-                ).permitAll()
-                .anyRequest().authenticated()
-                )
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(
+                                "/api/auth/**",
+                                "/login/**",
+                                "/oauth2/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/api/jobs/search",
+                                "/api/jobs",
+                                "/api/jobs/{id}",
+                                "/api/resumes/**",
+                                "/actuator/**")
+                        .permitAll()
+                        .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2
-                .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-                .successHandler(successHandler)
-                );
+                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+                        .successHandler(successHandler));
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
@@ -99,7 +97,9 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:5174"));
+        config.setAllowedOrigins(List.of(
+                "http://localhost:5173",
+                "https://d2ka0hgjwas0lw.cloudfront.net"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

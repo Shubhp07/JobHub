@@ -14,10 +14,9 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request,
-                         HttpServletResponse response,
-                         AuthenticationException authException) throws IOException {
+            HttpServletResponse response,
+            AuthenticationException authException) throws IOException {
         // Redirect to React frontend login page
-        response.sendRedirect("http://localhost:5173/login");
+        response.sendRedirect("https://jobhub-sp.netlify.app");
     }
 }
-

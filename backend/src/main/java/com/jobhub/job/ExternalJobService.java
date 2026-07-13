@@ -13,14 +13,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import com.jobhub.job.dto.ExternalJobDto;
 
 @Service
 public class ExternalJobService {
     
-    private static final String RAPIDAPI_KEY = "db95f16959msh52440b766c47f99p1095e2jsn24cb182eb255";
-    private static final String RAPIDAPI_HOST = "active-jobs-db.p.rapidapi.com";
-    private static final String RAPIDAPI_URL = "https://active-jobs-db.p.rapidapi.com/active-ats-6m?description_type=text";
+    @Value("${app.rapidapi.key}")
+    private String rapidApiKey;
+
+    @Value("${app.rapidapi.host}")
+    private String rapidApiHost;
+
+    @Value("${app.rapidapi.url}")
+    private String rapidApiUrl;
     
     private final RestTemplate restTemplate;
     
@@ -31,13 +38,13 @@ public class ExternalJobService {
     public List<ExternalJobDto> fetchExternalJobs() {
         try {
             HttpHeaders headers = new HttpHeaders();
-            headers.set("X-RapidAPI-Key", RAPIDAPI_KEY);
-            headers.set("X-RapidAPI-Host", RAPIDAPI_HOST);
+            headers.set("X-RapidAPI-Key", rapidApiKey);
+            headers.set("X-RapidAPI-Host", rapidApiHost);
             
             HttpEntity<String> entity = new HttpEntity<>(headers);
             
             ResponseEntity<ExternalJobDto[]> response = restTemplate.exchange(
-                RAPIDAPI_URL, 
+                rapidApiUrl, 
                 HttpMethod.GET, 
                 entity, 
                 ExternalJobDto[].class

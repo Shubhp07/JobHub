@@ -5,6 +5,7 @@ import java.net.URLEncoder; // Import the UserType enum
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -24,6 +25,9 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
+
+    @Value("${app.frontend.url}")
+    private String frontendUrl;
 
     public OAuth2LoginSuccessHandler(JwtTokenProvider jwtTokenProvider, UserRepository userRepository) {
         this.jwtTokenProvider = jwtTokenProvider;
@@ -77,7 +81,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         response.addHeader(org.springframework.http.HttpHeaders.SET_COOKIE, cookie.toString());
 
         // Redirect to the frontend with token for frontend state management
-        String redirectUrl = "http://localhost:5173/login/oauth-success" +
+        String redirectUrl = frontendUrl + "/login/oauth-success" +
                 "?name=" + URLEncoder.encode(user.getFirstName(), StandardCharsets.UTF_8) +
                 "&email=" + URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8) +
                 "&access_token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);

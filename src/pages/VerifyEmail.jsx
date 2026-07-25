@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { CheckCircle, XCircle, Loader } from 'lucide-react';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
 
 const VerifyEmail = () => {
   const [searchParams] = useSearchParams();
@@ -18,7 +19,7 @@ const VerifyEmail = () => {
 
     const verifyToken = async () => {
       try {
-        await axios.post(`http://localhost:8080/api/auth/verify-email?token=${token}`);
+        await axios.post(`${API_BASE_URL}/api/auth/verify-email?token=${token}`);
         setStatus('success');
       } catch (error) {
         setStatus('error');

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE_URL } from '../../config';
 
 const JobEditModal = ({ job, onClose, onUpdate }) => {
   const [formData, setFormData] = useState({
@@ -111,7 +112,7 @@ const JobEditModal = ({ job, onClose, onUpdate }) => {
         experienceLevel: formData.experienceLevel,
       };
 
-      const response = await fetch(`http://localhost:8080/api/jobs/${job.id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/jobs/${job.id}`, {
         method: "PUT",
         credentials: "include", headers: {
           "Content-Type": "application/json",

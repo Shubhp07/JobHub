@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, LogOut, ChevronUp, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../../config';
 
 const Sidebar = ({ menuItems, activeTab, setActiveTab, sidebarOpen = true, setSidebarOpen, onLogoutNavigate = '/login' }) => {
   const navigate = useNavigate();
@@ -57,7 +58,7 @@ const Sidebar = ({ menuItems, activeTab, setActiveTab, sidebarOpen = true, setSi
   const getProfilePictureUrl = () => {
     if (user.profilePicture && user.profilePicture !== 'null' && user.profilePicture.trim() !== '') {
       if (user.profilePicture.startsWith('http')) return user.profilePicture;
-      return `http://localhost:8080${user.profilePicture}`;
+      return `${API_BASE_URL}${user.profilePicture}`;
     }
     if (user.name && user.name !== "User") {
       const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
@@ -69,7 +70,7 @@ const Sidebar = ({ menuItems, activeTab, setActiveTab, sidebarOpen = true, setSi
   const handleLogout = async () => {
     console.log("Logout clicked");
     try {
-      await fetch("http://localhost:8080/api/auth/logout", {
+      await fetch(`${API_BASE_URL}/api/auth/logout`, {
         method: "POST",
         credentials: "include"
       });

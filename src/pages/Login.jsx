@@ -12,6 +12,7 @@ import {
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { API_BASE_URL } from "../config";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -36,7 +37,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/auth/login",
+        `${API_BASE_URL}/api/auth/login`,
         formData,
         { withCredentials: true, headers: { "Content-Type": "application/json" } }
       );
@@ -211,7 +212,7 @@ const Login = () => {
               <button
                 onClick={() => {
                   window.location.href =
-                    "http://localhost:8080/oauth2/authorization/google";
+                    `${API_BASE_URL}/oauth2/authorization/google`;
                 }}
                 className="w-full inline-flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors"
               >

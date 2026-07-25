@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, User, Menu, Settings } from 'lucide-react';
+import { API_BASE_URL } from '../../config';
 
 const DashboardHeader = ({ sidebarOpen, setSidebarOpen }) => {
   const [user, setUser] = useState({
@@ -60,7 +61,7 @@ const DashboardHeader = ({ sidebarOpen, setSidebarOpen }) => {
       if (user.profilePicture.startsWith('http')) {
         return user.profilePicture;
       }
-      return `http://localhost:8080${user.profilePicture}`;
+      return `${API_BASE_URL}${user.profilePicture}`;
     }
     
     // Create avatar with user's initials since profilePicture is null

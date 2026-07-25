@@ -17,13 +17,14 @@ import ApplicantsModal from "./ApplicantsModal";
 import JobEditModal from "./JobEditModal";
 import PageHeader from "../shared/PageHeader";
 import { HoverEffect } from "../ui/card-hover-effect";
+import { API_BASE_URL } from '../../config';
 
 const updateJobStatus = async (jobId, status) => {
   const token = localStorage.getItem("token");
   const headers = { "Content-Type": "application/json" };
   if (token) headers["Authorization"] = `Bearer ${token}`;
   const response = await fetch(
-    `http://localhost:8080/api/jobs/${jobId}/status?status=${status}`,
+    `${API_BASE_URL}/api/jobs/${jobId}/status?status=${status}`,
     {
       method: "PUT",
       credentials: "include",

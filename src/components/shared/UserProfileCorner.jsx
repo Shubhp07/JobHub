@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { User, ChevronDown } from 'lucide-react';
+import { API_BASE_URL } from '../../config';
 
 const UserProfileCorner = () => {
   const [user, setUser] = useState({
@@ -55,7 +56,7 @@ const UserProfileCorner = () => {
   const getProfilePictureUrl = () => {
     if (user.profilePicture && user.profilePicture !== 'null' && user.profilePicture.trim() !== '') {
       if (user.profilePicture.startsWith('http')) return user.profilePicture;
-      return `http://localhost:8080${user.profilePicture}`;
+      return `${API_BASE_URL}${user.profilePicture}`;
     }
     if (user.name && user.name !== "User") {
       const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();

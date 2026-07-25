@@ -11,6 +11,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import axios from "axios";
+import { API_BASE_URL } from "../config";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -58,7 +59,7 @@ const SignIn = () => {
     };
 
     const response = await axios.post(
-      "http://localhost:8080/api/auth/register",
+      `${API_BASE_URL}/api/auth/register`,
       payload,
       { withCredentials: true, headers: { "Content-Type": "application/json" } }
     );

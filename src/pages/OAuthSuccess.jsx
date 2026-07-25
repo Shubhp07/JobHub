@@ -1,6 +1,7 @@
 // src/pages/OAuthSuccess.jsx
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 
 const OAuthSuccess = () => {
   const [params] = useSearchParams();
@@ -11,7 +12,7 @@ const OAuthSuccess = () => {
     // need to extract it from the URL. The browser will automatically 
     // send it with the fetch request below thanks to credentials: "include".
 
-    fetch('http://localhost:8080/api/users/profile', {
+    fetch(`${API_BASE_URL}/api/users/profile`, {
       credentials: "include", 
       headers: { "Content-Type": "application/json" },
     })

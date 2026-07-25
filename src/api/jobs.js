@@ -1,4 +1,5 @@
 // src/api/jobs.js
+import { API_BASE_URL } from '../config';
 
 // Create a new Job (Employer use)
 export async function createJob(jobData) {
@@ -9,7 +10,7 @@ export async function createJob(jobData) {
     return;
   }
 
-  const response = await fetch('http://localhost:8080/api/jobs', {
+  const response = await fetch(`${API_BASE_URL}/api/jobs`, {
     method: 'POST',
     credentials: "include", headers: {
       'Content-Type': 'application/json',
@@ -31,7 +32,7 @@ export async function getAllJobs(page = 0, size = 5) {
   const token = localStorage.getItem("token");
 
   const response = await fetch(
-    `http://localhost:8080/api/jobs?page=${page}&size=${size}`,
+    `${API_BASE_URL}/api/jobs?page=${page}&size=${size}`,
     {
       credentials: "include", headers: {
         Authorization: `Bearer ${token}`, 
@@ -56,7 +57,7 @@ export async function getMyJobs(page = 0, size = 10) {
   }
 
   const response = await fetch(
-    `http://localhost:8080/api/jobs/my-jobs?page=${page}&size=${size}`,
+    `${API_BASE_URL}/api/jobs/my-jobs?page=${page}&size=${size}`,
     {
       credentials: "include", headers: {
         Authorization: `Bearer ${token}`,

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Search, Lock, Eye, EyeOff, CheckCircle, AlertCircle } from 'lucide-react';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
 
 const ResetPassword = () => {
   const [params] = useSearchParams();
@@ -24,7 +25,7 @@ const ResetPassword = () => {
     }
     setError('');
     try {
-      await axios.post('http://localhost:8080/api/auth/reset-password', null, {
+      await axios.post(`${API_BASE_URL}/api/auth/reset-password`, null, {
         params: { token, newPassword: password }
       });
       setReset(true);

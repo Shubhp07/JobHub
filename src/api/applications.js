@@ -1,4 +1,5 @@
 // src/api/applications.js
+import { API_BASE_URL } from '../config';
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('token');
@@ -10,7 +11,7 @@ const getAuthHeaders = () => {
 };
 
 export const applyToJob = async (jobId) => {
-  const response = await fetch(`http://localhost:8080/api/applications`, {
+  const response = await fetch(`${API_BASE_URL}/api/applications`, {
     method: 'POST',
     credentials: "include",
     headers: getAuthHeaders(),
@@ -26,7 +27,7 @@ export const applyToJob = async (jobId) => {
 };
 
 export const getApplicantsForJob = async (jobId) => {
-  const response = await fetch(`http://localhost:8080/api/applications/job/${jobId}`, {
+  const response = await fetch(`${API_BASE_URL}/api/applications/job/${jobId}`, {
     credentials: "include",
     headers: getAuthHeaders()
   });
@@ -41,8 +42,8 @@ export const getApplicantsForJob = async (jobId) => {
 
 export const getMyApplications = async (status = '') => {
   const url = status 
-    ? `http://localhost:8080/api/applications/my-applications?status=${status}` 
-    : `http://localhost:8080/api/applications/my-applications`;
+    ? `${API_BASE_URL}/api/applications/my-applications?status=${status}` 
+    : `${API_BASE_URL}/api/applications/my-applications`;
   
   const response = await fetch(url, {
     credentials: "include",
@@ -54,8 +55,8 @@ export const getMyApplications = async (status = '') => {
 
 export const getEmployerApplications = async (status = '') => {
   const url = status 
-    ? `http://localhost:8080/api/applications/employer/all?status=${status}` 
-    : `http://localhost:8080/api/applications/employer/all`;
+    ? `${API_BASE_URL}/api/applications/employer/all?status=${status}` 
+    : `${API_BASE_URL}/api/applications/employer/all`;
   
   const response = await fetch(url, {
     credentials: "include",
@@ -66,7 +67,7 @@ export const getEmployerApplications = async (status = '') => {
 };
 
 export const getSavedJobs = async () => {
-  const response = await fetch(`http://localhost:8080/api/saved-jobs`, {
+  const response = await fetch(`${API_BASE_URL}/api/saved-jobs`, {
     credentials: "include",
     headers: getAuthHeaders()
   });

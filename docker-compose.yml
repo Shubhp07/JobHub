@@ -1,36 +1,41 @@
 services:
   db:
     image: postgres:16-alpine
-    restart: unless-stopped
     environment:
       POSTGRES_DB: jobhub
-      POSTGRES_USER: ${DB_USERNAME:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-admin}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d jobhub"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d jobhub" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
   backend:
     build: ./backend
     ports:
       - "5000:5000"
-    env_file:
-      - .env
+    env_file: .env
     environment:
-      - DB_URL=jdbc:postgresql://db:5432/jobhub
+      DB_URL: jdbc:postgresql://db:5432/jobhub
+      MANAGEMENT_HEALTH_MAIL_ENABLED: "false"
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -qO /dev/null http://localhost:5000/actuator/health || exit 1" ]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 60s
 
   frontend:
     build:
       context: ./frontend
       args:
-        VITE_API_BASE_URL: http://localhost:5000
+        VITE_API_URL: http://localhost:5000
     ports:
       - "5173:80"
     depends_on:
@@ -38,4 +43,3 @@ services:
 
 volumes:
   pgdata:
-

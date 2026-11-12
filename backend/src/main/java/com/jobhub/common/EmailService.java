@@ -59,27 +59,12 @@ public class EmailService {
 
     @Async
     public void sendVerificationEmail(String toEmail, String verificationToken) {
-        try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(fromEmail);
-            message.setTo(toEmail);
-            message.setSubject("JobHub - Verify Your Email Address");
-            
-            String verificationUrl = frontendUrl + "/verify-email?token=" + verificationToken;
-            String emailBody = "Welcome to JobHub!\n\n" +
-                    "Please click the link below to verify your email address:\n" +
-                    verificationUrl + "\n\n" +
-                    "This link will expire in 15 minutes.\n\n" +
-                    "If you didn't create an account with JobHub, please ignore this email.\n\n" +
-                    "Best regards,\n" +
-                    "The JobHub Team";
-            
         String subject = "JobHub - Verify Your Email Address";
         String verificationUrl = frontendUrl + "/verify-email?token=" + verificationToken;
         String emailBody = "Welcome to JobHub!\n\n" +
                 "Please click the link below to verify your email address:\n" +
                 verificationUrl + "\n\n" +
-                "This link will expire in 24 hours.\n\n" +
+                "This link will expire in 15 minutes.\n\n" +
                 "If you didn't create an account with JobHub, please ignore this email.\n\n" +
                 "Best regards,\n" +
                 "The JobHub Team";

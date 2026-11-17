@@ -35,7 +35,8 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     }
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+            Authentication authentication)
             throws IOException, ServletException {
         System.out.println("OAuth2LoginSuccessHandler invoked for user: " + authentication.getName());
 
@@ -50,8 +51,14 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             System.out.println("User not found. Creating new user for: " + email);
             User newUser = new User();
             newUser.setEmail(email);
-            newUser.setFirstName(givenName != null && !givenName.isBlank() ? givenName : (name != null ? name : "Unknown")); // Use given_name or full name
-            newUser.setLastName(familyName != null && !familyName.isBlank() ? familyName : "User");   // Use family_name or default
+            newUser.setFirstName(
+                    givenName != null && !givenName.isBlank() ? givenName : (name != null ? name : "Unknown")); // Use
+                                                                                                                // given_name
+                                                                                                                // or
+                                                                                                                // full
+                                                                                                                // name
+            newUser.setLastName(familyName != null && !familyName.isBlank() ? familyName : "User"); // Use family_name
+                                                                                                    // or default
             newUser.setPassword("GOOGLE_AUTH"); // Required by @Size(min=8) and @NotBlank
 
             // ✅ CRUCIAL: Set the default role for new Google sign-ups

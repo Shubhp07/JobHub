@@ -2,10 +2,12 @@
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
+import { useAuth } from '../context/AuthContext';
 
 const OAuthSuccess = () => {
   const [params] = useSearchParams();
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   useEffect(() => {
     // The JWT is now securely stored in an HttpOnly cookie, so we don't
@@ -22,6 +24,7 @@ const OAuthSuccess = () => {
       })
       .then(user => {
         // Store access token from URL params if present
+        // NOTE: token is also set via HttpOnly cookie by the backend
         const accessToken = params.get('access_token');
         if (accessToken) {
           localStorage.setItem('token', accessToken);
@@ -30,10 +33,12 @@ const OAuthSuccess = () => {
         // Store user details for UI state
         localStorage.setItem('user', JSON.stringify(user));
 
-        // Clean URL params by removing the token from browser history
+        // ✅ FIX #3: Update AuthContext so isAuthenticated becomes true immediately
+        login(user);
+
+        // Clean URL params (remove token from browser history)
         window.history.replaceState({}, document.title, window.location.pathname);
 
-        // ✅ THE FIX: Compare against 'EMPLOYER' and 'JOBSEEKER' (no underscores)
         const userRole = (user.userType || '').trim().toUpperCase();
 
         if (userRole === 'EMPLOYER') {

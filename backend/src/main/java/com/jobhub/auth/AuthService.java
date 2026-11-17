@@ -110,7 +110,10 @@ public class AuthService {
     }
 
     public LoginResponse refreshToken(String token) {
-        String refreshToken = token.substring(7); // Remove "Bearer " prefix
+        // ✅ FIX #6: Safely strip "Bearer " prefix only if present
+        String refreshToken = (token != null && token.startsWith("Bearer "))
+                ? token.substring(7)
+                : token;
 
         if (!tokenProvider.validateToken(refreshToken)) {
             throw new BadRequestException("Invalid refresh token");
@@ -170,18 +173,17 @@ public class AuthService {
     }
 
     public void forgotPassword(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
-
-        // Send password reset email with error handling
-        try {
-            String resetToken = tokenProvider.generatePasswordResetToken(email);
-            emailService.sendPasswordResetEmail(email, resetToken);
-            System.out.println("Password reset email sent to " + email);
-        } catch (Exception e) {
-            System.err.println("Failed to send password reset email: " + e.getMessage());
-            e.printStackTrace();
-        }
+        // ✅ FIX #13: Don't throw 404 — silently succeed to prevent user enumeration attacks
+        userRepository.findByEmail(email).ifPresent(user -> {
+            try {
+                String resetToken = tokenProvider.generatePasswordResetToken(email);
+                emailService.sendPasswordResetEmail(email, resetToken);
+                System.out.println("Password reset email sent to " + email);
+            } catch (Exception e) {
+                System.err.println("Failed to send password reset email: " + e.getMessage());
+                e.printStackTrace();
+            }
+        });
     }
 
     public void resetPassword(String token, String newPassword) {

@@ -13,6 +13,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { API_BASE_URL } from "../config";
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -23,6 +24,7 @@ const Login = () => {
   });
 
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -55,12 +57,13 @@ const Login = () => {
 
         
         
+        const userData = { fullName, email, userType, userId, profilePicture };
         localStorage.setItem("token", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
-        localStorage.setItem(
-          "user",
-          JSON.stringify({ fullName, email, userType, userId, profilePicture })
-        );
+        localStorage.setItem("user", JSON.stringify(userData));
+
+        // ✅ FIX #1: Update AuthContext so isAuthenticated becomes true immediately
+        login(userData);
 
         if (userType.toLowerCase() === "jobseeker") {
           navigate("/dashboard/jobseeker");

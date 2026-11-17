@@ -33,6 +33,7 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2LoginSuccessHandler successHandler;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final HttpCookieOAuth2AuthorizationRequestRepository cookieAuthRequestRepository;
 
     @Value("${app.cors.allowed-origins}")
     private String corsAllowedOrigins;
@@ -45,12 +46,14 @@ public class SecurityConfig {
             UserDetailsService userDetailsService,
             CustomOAuth2UserService customOAuth2UserService,
             OAuth2LoginSuccessHandler successHandler,
-            JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
+            JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
+            HttpCookieOAuth2AuthorizationRequestRepository cookieAuthRequestRepository) {
         this.tokenProvider = tokenProvider;
         this.userDetailsService = userDetailsService;
         this.customOAuth2UserService = customOAuth2UserService;
         this.successHandler = successHandler;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+        this.cookieAuthRequestRepository = cookieAuthRequestRepository;
     }
 
     @Bean
@@ -94,14 +97,23 @@ public class SecurityConfig {
                         .permitAll()
                         .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2
-        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-        .successHandler(successHandler)
-        .failureHandler((request, response, ex) -> {
-            ex.printStackTrace(); // or log.error
-            String msg = java.net.URLEncoder.encode(
-                    String.valueOf(ex.getMessage()), java.nio.charset.StandardCharsets.UTF_8);
-            response.sendRedirect(frontendUrl + "/login?error=" + msg);
-        }))
+                        // ── cookie-based state store so STATELESS sessions still work ──
+                        .authorizationEndpoint(a -> a
+                                .authorizationRequestRepository(cookieAuthRequestRepository))
+                        .redirectionEndpoint(r -> r
+                                .baseUri("/login/oauth2/code/*"))
+                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+                        .successHandler(successHandler)
+                        .failureHandler((request, response, ex) -> {
+                            // Log the real exception so Render logs show the root cause
+                            System.err.println("[OAuth2 failure] " + ex.getClass().getSimpleName()
+                                    + ": " + ex.getMessage());
+                            ex.printStackTrace();
+                            String msg = java.net.URLEncoder.encode(
+                                    ex.getMessage() != null ? ex.getMessage() : ex.getClass().getSimpleName(),
+                                    java.nio.charset.StandardCharsets.UTF_8);
+                            response.sendRedirect(frontendUrl + "/login?error=" + msg);
+                        }));
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 

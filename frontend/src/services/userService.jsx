@@ -54,7 +54,8 @@ export const userService = {
       body: formData,
     });
     if (!res.ok) throw new Error('Failed to upload resume');
-    return res.text();
+    // ✅ FIX #14: Backend returns JSON { "resumeUrl": "..." }, not plain text
+    return res.json();
   },
 };
 

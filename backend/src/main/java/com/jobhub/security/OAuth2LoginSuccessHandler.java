@@ -1,7 +1,7 @@
 package com.jobhub.security;
 
 import java.io.IOException;
-import java.net.URLEncoder; // Import the UserType enum
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -12,9 +12,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import com.jobhub.user.User;
-import com.jobhub.user.UserType;
 import com.jobhub.user.UserRepository;
-import com.jobhub.security.JwtTokenProvider;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,62 +36,40 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication)
             throws IOException, ServletException {
-        System.out.println("OAuth2LoginSuccessHandler invoked for user: " + authentication.getName());
 
         OAuth2User oauthUser = (OAuth2User) authentication.getPrincipal();
         String email = oauthUser.getAttribute("email");
-        String name = oauthUser.getAttribute("name");
-        String givenName = oauthUser.getAttribute("given_name");
-        String familyName = oauthUser.getAttribute("family_name");
 
-        // ✅ FIX: Find user or create a new one if they don't exist
-        User user = userRepository.findByEmail(email).orElseGet(() -> {
-            System.out.println("User not found. Creating new user for: " + email);
-            User newUser = new User();
-            newUser.setEmail(email);
-            newUser.setFirstName(
-                    givenName != null && !givenName.isBlank() ? givenName : (name != null ? name : "Unknown")); // Use
-                                                                                                                // given_name
-                                                                                                                // or
-                                                                                                                // full
-                                                                                                                // name
-            newUser.setLastName(familyName != null && !familyName.isBlank() ? familyName : "User"); // Use family_name
-                                                                                                    // or default
-            newUser.setPassword("GOOGLE_AUTH"); // Required by @Size(min=8) and @NotBlank
+        System.out.println("[OAuth2LoginSuccessHandler] Invoked for email: " + email);
 
-            // ✅ CRUCIAL: Set the default role for new Google sign-ups
-            newUser.setUserType(UserType.JOBSEEKER);
+        // User was already created/found by CustomOAuth2UserService – just look it up.
+        User user = userRepository.findByEmail(email).orElseThrow(() ->
+                new IllegalStateException("OAuth2 user not found in DB after CustomOAuth2UserService ran: " + email));
 
-            newUser.setEmailVerified(true);
-            newUser.setEnabled(true);
-            newUser.setIsActive(true);
-
-            return userRepository.save(newUser);
-        });
-
-        // ✅ FIX: Prepare roles correctly using the user's UserType
-        String userRole = user.getUserType().name(); // This will be "JOB_SEEKER" or "EMPLOYER"
+        String userRole = user.getUserType().name();
         List<String> roles = List.of(userRole);
 
-        // ✅ Generate JWT with the correct email and roles
         String token = jwtTokenProvider.generateToken(user.getEmail(), roles);
 
-        // ✅ Set HttpOnly cookie
-        org.springframework.http.ResponseCookie cookie = org.springframework.http.ResponseCookie.from("jwt", token)
+        // HttpOnly cookie – secure=true because Render always serves HTTPS.
+        // SameSite=None is required for the cross-site redirect from Google.
+        org.springframework.http.ResponseCookie cookie = org.springframework.http.ResponseCookie
+                .from("jwt", token)
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)                   // ← was false; must be true on HTTPS
                 .path("/")
                 .maxAge(24 * 60 * 60)
+                .sameSite("None")               // required for cross-origin cookie after redirect
                 .build();
         response.addHeader(org.springframework.http.HttpHeaders.SET_COOKIE, cookie.toString());
 
-        // Redirect to the frontend with token for frontend state management
-        String redirectUrl = frontendUrl + "/login/oauth-success" +
-                "?name=" + URLEncoder.encode(user.getFirstName(), StandardCharsets.UTF_8) +
-                "&email=" + URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8) +
-                "&access_token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
+        String redirectUrl = frontendUrl + "/login/oauth-success"
+                + "?name="         + URLEncoder.encode(user.getFirstName(), StandardCharsets.UTF_8)
+                + "&email="        + URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8)
+                + "&access_token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
 
-        System.out.println("Redirecting OAuth user to: " + redirectUrl);
+        System.out.println("[OAuth2LoginSuccessHandler] Redirecting to: " + redirectUrl);
         response.sendRedirect(redirectUrl);
     }
 }
+

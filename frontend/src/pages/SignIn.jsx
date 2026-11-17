@@ -55,7 +55,8 @@ const SignIn = () => {
       lastName: formData.lastName,
       email: formData.email,
       password: formData.password,
-      userType: formData.userType,
+      // ✅ FIX #4: Java enum requires UPPERCASE — normalize before sending
+      userType: formData.userType.toUpperCase(),
     };
 
     const response = await axios.post(

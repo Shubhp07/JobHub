@@ -37,6 +37,9 @@ public class SecurityConfig {
     @Value("${app.cors.allowed-origins}")
     private String corsAllowedOrigins;
 
+    @Value("${FRONTEND_URL:http://localhost:5173}")
+    private String frontendUrl;
+
     @Autowired
     public SecurityConfig(JwtTokenProvider tokenProvider,
             UserDetailsService userDetailsService,
@@ -91,8 +94,14 @@ public class SecurityConfig {
                         .permitAll()
                         .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-                        .successHandler(successHandler));
+        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+        .successHandler(successHandler)
+        .failureHandler((request, response, ex) -> {
+            ex.printStackTrace(); // or log.error
+            String msg = java.net.URLEncoder.encode(
+                    String.valueOf(ex.getMessage()), java.nio.charset.StandardCharsets.UTF_8);
+            response.sendRedirect(frontendUrl + "/login?error=" + msg);
+        }))
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 

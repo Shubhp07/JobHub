@@ -41,8 +41,6 @@ const Login = () => {
         formData,
         { withCredentials: true, headers: { "Content-Type": "application/json" } }
       );
-      console.log("Login response full:", response.data);
-      console.log("Access Token:", response.data.accessToken);
 
       if (response.status === 200) {
         const {
